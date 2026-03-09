@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ภาพรวม - The One House 3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+      :root { 
+        --sidebar-bg: #000000; --sidebar-active: #2b2b2b; --text-color: #ffffff;
+        --bg-body: #ffffff; --primary: #111111; --sidebar-width: 260px; 
+      }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Kanit', sans-serif; }
+        body { background-color: var(--bg-body); display: flex; min-height: 100vh; }
+        
+        /* --- Sidebar (ดีไซน์ใหม่) --- */
+        .sidebar { 
+            width: var(--sidebar-width); 
+            background: var(--sidebar-bg); 
+            color: white; 
+            padding: 30px 20px; 
+            position: fixed; 
+            height: 100%; 
+            display: flex; 
+            flex-direction: column; 
+            z-index: 10; 
+        }
+        .sidebar-brand { 
+            font-size: 1.5rem; 
+            font-weight: 800; 
+            color: #fff; 
+            margin-bottom: 30px; 
+            padding-left: 15px; 
+            letter-spacing: 0.5px; 
+        }
+        .menu-item { 
+            display: flex; 
+            align-items: center; 
+            padding: 15px 20px; 
+            color: #ffffff; 
+            text-decoration: none; 
+            border-radius: 12px; 
+            margin-bottom: 8px; 
+            font-weight: 500; 
+            font-size: 1.1rem; 
+            transition: 0.2s; 
+        }
+        .menu-item i { 
+            margin-right: 15px; 
+            width: 25px; 
+            font-size: 1.2rem; 
+            text-align: center; 
+        }
+        .menu-item.active { 
+            background-color: var(--sidebar-active); 
+            color: white; 
+            font-weight: 600; 
+        }
+        .menu-item:hover:not(.active) { 
+            background-color: rgba(255,255,255,0.08); 
+        }
+        .mt-auto { margin-top: auto; }
+
+        /* --- Main Content --- */
+        .main-content { margin-left: var(--sidebar-width); flex: 1; padding: 40px; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #eee; display: flex; align-items: center; transition: 0.3s; cursor: pointer; }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+        .stat-icon { width: 55px; height: 55px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin-right: 20px; color: white; }
+        .stat-info h3 { font-size: 0.95rem; color: #888; font-weight: 400; margin-bottom: 5px; }
+        .stat-info p { font-size: 1.8rem; font-weight: 600; color: var(--primary); line-height: 1; }
+
+        .editor-section { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #eee; margin-bottom: 30px; }
+        .editor-header { border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 20px; color: var(--primary); font-size: 1.2rem; font-weight: 600; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #555; }
+        .input-group input[type="text"], .input-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.95rem; outline: none; }
+        .input-group textarea { height: 100px; resize: vertical; }
+
+        .preview-box { width: 100%; height: 180px; background: #f9f9f9; border: 2px dashed #ddd; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; position: relative; }
+        .preview-box img { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .preview-box span { color: #aaa; font-size: 0.9rem; }
+        
+        .btn-save { background-color: var(--primary); color: white; padding: 12px 30px; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: 0.3s; margin-top: 20px; width: 100%; font-weight: 600;}
+        .btn-save:hover { background-color: #333; }
+
+        /* --- Dynamic Gallery Upload Styles --- */
+        .img-upload-box { border: 2px dashed #ccc; padding: 25px 15px; text-align: center; border-radius: 8px; background: #fafafa; cursor: pointer; transition: 0.3s; }
+        .img-upload-box:hover { background: #f0f0f0; border-color: var(--primary); }
+        .preview-gallery { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+        .preview-item { position: relative; width: 90px; height: 90px; border-radius: 6px; overflow: hidden; border: 1px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .preview-item img { width: 100%; height: 100%; object-fit: cover; }
+        .btn-remove-img { position: absolute; top: 0; right: 0; background: rgba(220, 53, 69, 0.9); color: white; border: none; width: 22px; height: 22px; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; }
+
+        @media (max-width: 900px) { .form-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="sidebar-brand">THE ONE HOUSE 3</div>
+        <a href="#" class="menu-item active"><i class="fas fa-home"></i> ภาพรวม </a>
+        <a href="admin_rooms.html" class="menu-item"><i class="fas fa-bed"></i> จัดการห้องพัก</a>
+        <a href="admin_booking.html" class="menu-item"><i class="fas fa-list-alt"></i> รายการจอง</a>
+        <a href="admin_utilities.html" class="menu-item"><i class="fas fa-faucet"></i> ค่าน้ำ/ไฟ/เน็ต</a>
+        <a href="admin_reports.html" class="menu-item"><i class="fas fa-tools"></i> รายการแจ้งซ่อม</a>
+        <a href="index.html" class="menu-item mt-auto"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</a>
+    </nav>
+
+    <main class="main-content">
+        <h2 style="margin-bottom: 25px; color: var(--primary); font-size: 1.6rem; font-weight: 600;">ภาพรวมหอพัก (Dashboard)</h2>
+        
+        <div class="stats-grid">
+            <div class="stat-card" onclick="window.location.href='admin_rooms.html'">
+                <div class="stat-icon" style="background: #4caf50;"><i class="fas fa-door-open"></i></div>
+                <div class="stat-info"><h3>ห้องว่าง</h3><p id="emptyCount">0</p></div>
+            </div>
+            <div class="stat-card" onclick="window.location.href='admin_rooms.html'">
+                <div class="stat-icon" style="background: #ef5350;"><i class="fas fa-user-check"></i></div>
+                <div class="stat-info"><h3>มีผู้เช่า</h3><p id="occupiedCount">0</p></div>
+            </div>
+            <div class="stat-card" onclick="window.location.href='admin_booking.html'">
+                <div class="stat-icon" style="background: #795548;"><i class="fas fa-list-alt"></i></div>
+                <div class="stat-info"><h3>รายการจอง</h3><p id="bookingCount">0</p></div>
+            </div>
+            <div class="stat-card" onclick="window.location.href='admin_reports.html'">
+                <div class="stat-icon" style="background: #ff9800;"><i class="fas fa-tools"></i></div>
+                <div class="stat-info"><h3>แจ้งซ่อมคงค้าง</h3><p id="repairCount">0</p></div>
+            </div>
+        </div>
+
+        <div class="editor-section">
+            <div class="editor-header"><i class="fas fa-edit"></i> จัดการเนื้อหาหน้าแรก (Index Page)</div>
+            
+            <div class="form-grid">
+                <div>
+                    <h4 style="margin-bottom:15px; color:#666;">1. ข้อมูลห้องแนะนำ</h4>
+                    <div class="input-group">
+                        <label>หัวข้อ:</label>
+                        <input type="text" id="featTitle" placeholder="เช่น ห้อง Standard ว่างแล้ว!">
+                    </div>
+                    <div class="input-group">
+                        <label>คำบรรยาย:</label>
+                        <textarea id="featDesc" placeholder="รายละเอียด..."></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label>สิ่งอำนวยความสะดวก (คั่นด้วย , ):</label>
+                        <input type="text" id="featFacilities" placeholder="แอร์, ตู้เย็น, เครื่องทำน้ำอุ่น">
+                    </div>
+                    <div class="input-group">
+                        <label>รูปห้องแนะนำ (อัปโหลด 1 รูป):</label>
+                        <div class="preview-box"><img id="previewFeat" src=""><span>ตัวอย่างรูป</span></div>
+                        <input type="file" accept="image/*" onchange="previewImage(this, 'previewFeat')">
+                    </div>
+                </div>
+
+                <div>
+                    <h4 style="margin-bottom:15px; color:#666;">2. รูปสไลด์บริเวณหอพัก (ไม่จำกัดจำนวน)</h4>
+                    <div class="input-group">
+                        <div class="img-upload-box" onclick="document.getElementById('galleryInput').click()">
+                            <i class="fas fa-images" style="font-size: 2.5rem; color: #ccc; margin-bottom: 10px;"></i>
+                            <p style="font-size:0.9rem; color:#888; margin-top:5px;">คลิกเพื่อเลือกไฟล์ (เลือกพร้อมกันได้หลายรูป)</p>
+                            <input type="file" id="galleryInput" multiple accept="image/*" style="display:none;" onchange="handleGalleryUpload()">
+                        </div>
+                        <div class="preview-gallery" id="galleryPreviewContainer"></div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-save" onclick="saveWebsiteData()"><i class="fas fa-save"></i> บันทึกข้อมูลไปหน้าเว็บ</button>
+        </div>
+    </main>
+
+    <script>
+        let galleryImagesArr = [];
+
+        function updateStats() {
+            const rooms = JSON.parse(localStorage.getItem('admin_all_rooms')) || [];
+            if (rooms.length > 0) {
+                const occupied = rooms.filter(r => r.status === 'occupied').length;
+                document.getElementById('occupiedCount').innerText = occupied;
+                document.getElementById('emptyCount').innerText = rooms.length - occupied;
+            }
+            const reports = JSON.parse(localStorage.getItem('admin_reports')) || [];
+            document.getElementById('repairCount').innerText = reports.filter(r => r.status === 'pending').length;
+            const bookings = JSON.parse(localStorage.getItem('booking_requests')) || [];
+            document.getElementById('bookingCount').innerText = bookings.length;
+        }
+
+        // --- ระบบบีบอัดรูปภาพ (ลดขนาดไฟล์ไม่ให้ Storage เต็ม) ---
+        function compressImage(base64Str, maxWidth = 800, quality = 0.7) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.src = base64Str;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > maxWidth) {
+                        height *= maxWidth / width;
+                        width = maxWidth;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', quality));
+                };
+            });
+        }
+
+        function loadWebsiteData() {
+            const data = JSON.parse(localStorage.getItem('websiteData')) || {};
+            if(data.featTitle) document.getElementById('featTitle').value = data.featTitle;
+            if(data.featDesc) document.getElementById('featDesc').value = data.featDesc;
+            if(data.featFacilities) document.getElementById('featFacilities').value = data.featFacilities;
+            
+            showPreview('previewFeat', data.featImg);
+
+            if (data.galleryImages && Array.isArray(data.galleryImages)) {
+                galleryImagesArr = data.galleryImages;
+            } else {
+                if(data.gal1) galleryImagesArr.push(data.gal1);
+                if(data.gal2) galleryImagesArr.push(data.gal2);
+                if(data.gal3) galleryImagesArr.push(data.gal3);
+                if(data.gal4) galleryImagesArr.push(data.gal4);
+            }
+            renderGalleryPreview();
+        }
+
+        function showPreview(elementId, src) {
+            if (src) {
+                const img = document.getElementById(elementId);
+                img.src = src;
+                img.style.display = 'block';
+                if(img.nextElementSibling) img.nextElementSibling.style.display = 'none'; 
+            }
+        }
+
+        // อัปโหลดรูปเดี่ยว (พร้อมบีบอัด)
+        function previewImage(input, previewId) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) { 
+                    compressImage(e.target.result, 800, 0.7).then(compressed => {
+                        showPreview(previewId, compressed); 
+                    });
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // อัปโหลด Gallery หลายรูป (พร้อมบีบอัด)
+        function handleGalleryUpload() {
+            const input = document.getElementById('galleryInput');
+            if (input.files) {
+                Array.from(input.files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        compressImage(e.target.result, 800, 0.7).then(compressed => {
+                            galleryImagesArr.push(compressed);
+                            renderGalleryPreview();
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+            input.value = ''; 
+        }
+
+        function renderGalleryPreview() {
+            const container = document.getElementById('galleryPreviewContainer');
+            container.innerHTML = '';
+            galleryImagesArr.forEach((imgSrc, idx) => {
+                container.innerHTML += `
+                    <div class="preview-item">
+                        <img src="${imgSrc}">
+                        <button class="btn-remove-img" onclick="removeGalleryImg(${idx})">×</button>
+                    </div>
+                `;
+            });
+        }
+
+        function removeGalleryImg(idx) {
+            galleryImagesArr.splice(idx, 1);
+            renderGalleryPreview();
+        }
+
+        function saveWebsiteData() {
+            const data = {
+                featTitle: document.getElementById('featTitle').value,
+                featDesc: document.getElementById('featDesc').value,
+                featFacilities: document.getElementById('featFacilities').value,
+                featImg: document.getElementById('previewFeat').getAttribute('src'),
+                galleryImages: galleryImagesArr 
+            };
+
+            try {
+                localStorage.setItem('websiteData', JSON.stringify(data));
+                alert('✅ บันทึกข้อมูลเรียบร้อย! ข้อมูลเชื่อมกับหน้าหลักแล้วครับ');
+            } catch (e) {
+                alert('❌ ไฟล์รูปภาพรวมกันยังมีขนาดใหญ่เกินไป! กรุณาลบรูปบางส่วนออกครับ');
+            }
+        }
+
+        window.onload = function() {
+            updateStats();
+            loadWebsiteData();
+        };
+    </script>
+</body>
+</html>

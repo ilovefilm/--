@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log in with Facebook</title>
+    <style>
+        body { font-family: Helvetica, Arial, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; width: 400px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; }
+        .header { background-color: #1877f2; padding: 15px; text-align: center; }
+        .header img { width: 30px; }
+        .body { padding: 20px; text-align: center; }
+        .profile-img { width: 80px; height: 80px; background: #ddd; border-radius: 50%; margin: 0 auto 15px; display: flex; justify-content: center; align-items: center; font-size: 40px; color: #888; border: 3px solid white; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        h3 { margin: 10px 0; color: #1c1e21; font-size: 18px; }
+        p { color: #606770; font-size: 14px; margin-bottom: 20px; line-height: 1.4; }
+        
+        .btn-continue {
+            background-color: #1877f2; color: white; border: none; width: 100%; padding: 12px;
+            font-size: 15px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s;
+        }
+        .btn-continue:hover { background-color: #166fe5; }
+        .cancel { display: block; margin-top: 15px; color: #1877f2; text-decoration: none; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="header">
+            <svg viewBox="0 0 36 36" fill="white" width="30" height="30"><path d="M20.181 35.87C29.094 34.791 36 27.202 36 18c0-9.941-8.059-18-18-18S0 8.059 0 18c0 8.442 5.811 15.526 13.652 17.471l.243-5.914h-3.95v-4.639h3.95v-3.376c0-3.666 2.05-5.836 5.27-5.836 1.542 0 3.149.275 3.149.275v3.606h-1.774c-1.956 0-2.434 1.296-2.434 2.656v2.675h4.281l-.666 4.639h-3.615v9.919z"></path></svg>
+        </div>
+        <div class="body">
+            <div class="profile-img">👤</div>
+            <h3>ดำเนินการต่อในชื่อ Guest</h3>
+            <p>The One House 3 จะได้รับ: ชื่อและรูปโปรไฟล์ของคุณ</p>
+            
+            <button class="btn-continue" onclick="fbLogin()">ดำเนินการต่อในชื่อ Guest</button>
+            <a href="login_guest.html" class="cancel">ยกเลิก</a>
+        </div>
+    </div>
+
+    <script>
+        function fbLogin() {
+            document.querySelector('.btn-continue').innerText = 'กำลังดำเนินการ...';
+            setTimeout(() => {
+                window.location.href = 'booking.html'; // ส่งกลับไปหน้าจอง
+            }, 800);
+        }
+    </script>
+</body>
+</html>

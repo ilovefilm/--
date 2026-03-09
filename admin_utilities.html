@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ค่าน้ำ/ไฟ/เน็ต - THE ONE HOUSE 3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --sidebar-bg: #000000; --sidebar-active: #2b2b2b; --text-color: #ffffff;
+            --bg-body: #ffffff; --primary: #111111; --sidebar-width: 260px; 
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Kanit', sans-serif; }
+        body { background-color: var(--bg-body); display: flex; min-height: 100vh; }
+        
+        /* --- Sidebar (ดีไซน์ใหม่) --- */
+        .sidebar { 
+            width: var(--sidebar-width); 
+            background: var(--sidebar-bg); 
+            color: white; 
+            padding: 30px 20px; 
+            position: fixed; 
+            height: 100%; 
+            display: flex; 
+            flex-direction: column; 
+            z-index: 10; 
+        }
+        .sidebar-brand { 
+            font-size: 1.5rem; 
+            font-weight: 800; 
+            color: #fff; 
+            margin-bottom: 30px; 
+            padding-left: 15px; 
+            letter-spacing: 0.5px; 
+        }
+        .menu-item { 
+            display: flex; 
+            align-items: center; 
+            padding: 15px 20px; 
+            color: #ffffff; 
+            text-decoration: none; 
+            border-radius: 12px; 
+            margin-bottom: 8px; 
+            font-weight: 500; 
+            font-size: 1.1rem; 
+            transition: 0.2s; 
+        }
+        .menu-item i { 
+            margin-right: 15px; 
+            width: 25px; 
+            font-size: 1.2rem; 
+            text-align: center; 
+        }
+        .menu-item.active { 
+            background-color: var(--sidebar-active); 
+            color: white; 
+            font-weight: 600; 
+        }
+        .menu-item:hover:not(.active) { 
+            background-color: rgba(255,255,255,0.08); 
+        }
+        .mt-auto { margin-top: auto; }
+
+        /* --- Main Content --- */
+        .main-content { margin-left: var(--sidebar-width); flex: 1; padding: 40px; }
+        .header-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .header-section h2 { font-size: 1.6rem; font-weight: 600; color: var(--primary); }
+        
+        .header-actions { display: flex; gap: 10px; }
+        .btn-save-top { background: #000; color: #fff; border: none; padding: 10px 20px; border-radius: 10px; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
+        .btn-save-top:hover { background: #333; }
+        .btn-reset { background: #dc3545; color: #fff; border: none; padding: 10px 20px; border-radius: 10px; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
+        .btn-reset:hover { background: #c82333; }
+
+        .table-container { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #ddd; }
+        table { width: 100%; border-collapse: collapse; text-align: center; }
+        th { background-color: #5d5d5d; color: white; font-weight: 400; font-size: 0.9rem; padding: 12px 5px; border: 1px solid #777; }
+        td { padding: 15px 5px; border-bottom: 1px solid #eee; font-size: 0.95rem; color: #333; }
+
+        input[type="number"] { width: 85px; background-color: #e9ecef; border: none; border-radius: 8px; padding: 8px 5px; text-align: center; font-size: 0.9rem; outline: none; transition: 0.2s; }
+        input[type="number"]:focus { background-color: #dee2e6; box-shadow: inset 0 0 5px rgba(0,0,0,0.1); }
+        .total-text { font-weight: 500; color: #111; }
+
+        .status-badge { padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: 500; display: inline-block; cursor: pointer; }
+        .bg-paid { background: #4caf50; color: white; }
+        .bg-unpaid { background: #ced4da; color: #6c757d; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="sidebar-brand">THE ONE HOUSE 3</div>
+        <a href="admin_dashboard.html" class="menu-item"><i class="fas fa-home"></i> ภาพรวม </a>
+        <a href="admin_rooms.html" class="menu-item"><i class="fas fa-bed"></i> จัดการห้องพัก</a>
+        <a href="admin_booking.html" class="menu-item"><i class="fas fa-list-alt"></i> รายการจอง</a>
+        <a href="#" class="menu-item active"><i class="fas fa-faucet"></i> ค่าน้ำ/ไฟ/เน็ต</a>
+        <a href="admin_reports.html" class="menu-item"><i class="fas fa-tools"></i> รายการแจ้งซ่อม</a>
+        <a href="index.html" class="menu-item mt-auto"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</a>
+    </nav>
+
+    <main class="main-content">
+        <div class="header-section">
+            <h2>จัดการบิลรายเดือน</h2>
+            <div class="header-actions">
+                <button class="btn-reset" onclick="resetData()">
+                    <i class="fas fa-trash-alt"></i> ล้างข้อมูลทดสอบ
+                </button>
+                <button class="btn-save-top" onclick="saveAllBills()">
+                    <i class="fas fa-save"></i> บันทึกข้อมูลทั้งหมด
+                </button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th rowspan="2" width="70">ห้อง</th>
+                        <th colspan="2">ไฟฟ้า (8บ./หน่วย)</th>
+                        <th colspan="2">น้ำ / อินเตอร์เน็ต</th>
+                        <th>ค่าใช้จ่ายคงที่</th>
+                        <th rowspan="2" width="120">รวมสุทธิ</th>
+                        <th rowspan="2" width="110">สถานะ</th>
+                    </tr>
+                    <tr>
+                        <th>มิเตอร์เก่า</th>
+                        <th>มิเตอร์ใหม่</th>
+                        <th>น้ำ</th>
+                        <th>อินเตอร์เน็ต</th>
+                        <th>ค่าห้อง</th>
+                    </tr>
+                </thead>
+                <tbody id="billTableBody">
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        const RATE_ELEC = 8;
+        const DEFAULT_WATER = 200;
+        const DEFAULT_INTERNET = 200;
+        const DEFAULT_ROOM = 3500;
+
+        function initTable() {
+            const tbody = document.getElementById('billTableBody');
+            tbody.innerHTML = '';
+            let bills = JSON.parse(localStorage.getItem('apartment_bills')) || {};
+            
+            // สร้างเลขห้อง 01 ถึง 67
+            for (let i = 1; i <= 67; i++) {
+                let roomNum = i.toString().padStart(2, '0'); // ทำให้เป็น 01, 02, 03...
+                
+                let data = bills[roomNum] || {};
+
+                // บังคับใส่ค่าเริ่มต้น
+                if (data.elec_old === undefined || data.elec_old === '00.00' || data.elec_old === '') data.elec_old = 0;
+                if (data.elec_new === undefined) data.elec_new = '';
+                if (data.water === undefined || data.water === '') data.water = DEFAULT_WATER;
+                if (data.internet === undefined || data.internet === '') data.internet = DEFAULT_INTERNET;
+                if (data.room_price === undefined || data.room_price === '') data.room_price = DEFAULT_ROOM;
+                if (data.status === undefined) data.status = 'unpaid';
+
+                let eOld = parseFloat(data.elec_old) || 0;
+                let eNew = parseFloat(data.elec_new) || 0;
+                let elecUnits = (eNew > eOld) ? (eNew - eOld) : 0;
+                let total = (elecUnits * RATE_ELEC) + (parseFloat(data.water) || 0) + (parseFloat(data.internet) || 0) + (parseFloat(data.room_price) || 0);
+
+                let row = `
+                    <tr data-room="${roomNum}">
+                        <td><strong>${roomNum}</strong></td>
+                        <td><input type="number" class="in-elec-old" value="${data.elec_old}" onchange="updateCalc('${roomNum}')"></td>
+                        <td><input type="number" class="in-elec-new" value="${data.elec_new}" placeholder="0" onchange="updateCalc('${roomNum}')"></td>
+                        <td><input type="number" class="in-water" value="${data.water}" onchange="updateCalc('${roomNum}')"></td>
+                        <td><input type="number" class="in-internet" value="${data.internet}" onchange="updateCalc('${roomNum}')"></td>
+                        <td><input type="number" class="in-room" value="${data.room_price}" onchange="updateCalc('${roomNum}')"></td>
+                        <td class="total-text" id="total-${roomNum}">${total.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                        <td>
+                            <span class="status-badge ${data.status === 'paid' ? 'bg-paid' : 'bg-unpaid'}" 
+                                  onclick="toggleStatus(this)" data-status="${data.status}" id="status-${roomNum}">
+                                ${data.status === 'paid' ? 'ชำระแล้ว' : 'รอชำระ'}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            }
+        }
+
+        function updateCalc(roomNum) {
+            const row = document.querySelector(`tr[data-room="${roomNum}"]`);
+            let eOld = parseFloat(row.querySelector('.in-elec-old').value) || 0;
+            let eNew = parseFloat(row.querySelector('.in-elec-new').value) || 0;
+            let water = parseFloat(row.querySelector('.in-water').value) || 0;
+            let internet = parseFloat(row.querySelector('.in-internet').value) || 0;
+            let roomPrice = parseFloat(row.querySelector('.in-room').value) || 0;
+            
+            let elecUnits = (eNew > eOld) ? (eNew - eOld) : 0;
+            let total = (elecUnits * RATE_ELEC) + water + internet + roomPrice;
+            document.getElementById(`total-${roomNum}`).innerText = total.toLocaleString(undefined, {minimumFractionDigits: 2});
+        }
+
+        function toggleStatus(element) {
+            let currentStatus = element.getAttribute('data-status');
+            if(currentStatus === 'paid') {
+                element.setAttribute('data-status', 'unpaid');
+                element.innerText = 'รอชำระ';
+                element.className = 'status-badge bg-unpaid';
+            } else {
+                element.setAttribute('data-status', 'paid');
+                element.innerText = 'ชำระแล้ว';
+                element.className = 'status-badge bg-paid';
+            }
+        }
+
+        function saveAllBills() {
+            let bills = JSON.parse(localStorage.getItem('apartment_bills')) || {};
+            const rows = document.querySelectorAll('#billTableBody tr');
+            
+            rows.forEach(row => {
+                const roomNum = row.getAttribute('data-room');
+                if (roomNum) {
+                    if (!bills[roomNum]) bills[roomNum] = {};
+                    bills[roomNum].elec_old = row.querySelector('.in-elec-old').value;
+                    bills[roomNum].elec_new = row.querySelector('.in-elec-new').value;
+                    bills[roomNum].water = row.querySelector('.in-water').value;
+                    bills[roomNum].internet = row.querySelector('.in-internet').value;
+                    bills[roomNum].room_price = row.querySelector('.in-room').value;
+                    
+                    const badge = row.querySelector('.status-badge');
+                    bills[roomNum].status = badge.getAttribute('data-status') || 'unpaid';
+                }
+            });
+            localStorage.setItem('apartment_bills', JSON.stringify(bills));
+            alert('✅ บันทึกข้อมูลและส่งไปยังหน้าของผู้เช่าเรียบร้อยแล้ว!');
+        }
+
+        function resetData() {
+            if(confirm('⚠️ คำเตือน: คุณต้องการล้างข้อมูลบิลทั้งหมดกลับไปเป็นค่าเริ่มต้นใช่หรือไม่?')) {
+                localStorage.removeItem('apartment_bills');
+                location.reload(); 
+            }
+        }
+        window.onload = initTable;
+    </script>
+</body>
+</html>

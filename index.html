@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The One House 3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* --- Base Setup --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Kanit', sans-serif; }
+        body { background-color: #ffffff; color: #333; overflow-x: hidden; }
+
+        /* --- Navbar (Dark Theme) --- */
+        header {
+            position: fixed; top: 0; left: 0; width: 100%;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 40px; z-index: 1000;
+            background: #1a1a1a; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .menu-toggle { color: white; font-size: 1.5rem; cursor: pointer; display: none; } 
+        .logo { font-size: 1.5rem; font-weight: 800; color: #ffffff; letter-spacing: 1px; }
+
+        .nav-links { list-style: none; display: flex; gap: 30px; }
+        .nav-links li a { text-decoration: none; color: #ccc; font-weight: 400; font-size: 0.95rem; transition: 0.3s; }
+        .nav-links li a:hover { color: #fff; }
+
+        .header-right { display: flex; align-items: center; gap: 20px; }
+        
+        .btn-login { 
+            text-decoration: none; background-color: #ffffff; color: #000; 
+            padding: 8px 25px; border-radius: 30px; font-size: 0.9rem; 
+            font-weight: 600; transition: 0.3s; 
+        }
+        .btn-login:hover { background-color: #ddd; }
+
+        .user-actions { display: none; align-items: center; gap: 20px; color: white; }
+        .icon-wrapper { position: relative; cursor: pointer; }
+        .icon-wrapper i { font-size: 1.2rem; transition: 0.2s; }
+        .icon-wrapper i:hover { color: #aaa; }
+        
+        /* Dropdowns */
+        .dropdown-menu {
+            position: absolute; top: 35px; right: -10px; width: 250px;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            padding: 15px; display: none; color: #333; z-index: 1001;
+            border: 1px solid #eee;
+        }
+        .dropdown-menu.active { display: block; animation: fadeIn 0.2s; }
+        .dropdown-menu h4 { font-size: 1rem; border-bottom: 1px solid #ddd; padding-bottom: 8px; margin-bottom: 10px; color: #000; }
+        .drop-item { display: block; padding: 8px 0; color: #555; text-decoration: none; font-size: 0.9rem; transition: 0.2s; }
+        .drop-item:hover { color: #000; padding-left: 5px; }
+        .btn-logout-drop { color: #d32f2f; margin-top: 10px; display: block; border-top: 1px solid #ddd; padding-top: 10px; text-decoration: none; font-size: 0.9rem;}
+
+        /* Sidebar (Logged State) */
+        .sidebar-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(3px);
+            z-index: 10000; display: none; opacity: 0; transition: 0.3s;
+        }
+        .sidebar-menu {
+            position: fixed; top: 0; left: -300px; width: 280px; height: 100vh;
+            background: rgba(30, 30, 30, 0.95); backdrop-filter: blur(10px);
+            z-index: 10001; transition: 0.4s ease; padding: 20px; box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column;
+        }
+        .sidebar-menu.open { left: 0; }
+        .sidebar-header { display: flex; justify-content: space-between; color: white; font-size: 1.2rem; border-bottom: 1px solid #444; padding-bottom: 15px; margin-bottom: 20px; }
+        .side-link { color: #ccc; text-decoration: none; padding: 12px 10px; font-size: 1rem; display: flex; align-items: center; gap: 15px; border-radius: 8px; transition: 0.2s; }
+        .side-link:hover { background: rgba(255,255,255,0.1); color: white; }
+
+        /* --- Hero Section --- */
+        .hero {
+            height: 100vh; width: 100%;
+            background-image: url("ch7.jpg"); 
+            background-size: cover; background-position: center;
+            display: flex; justify-content: center; align-items: center;
+            text-align: center; position: relative;
+        }
+        .hero::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.3); }
+        .hero-content { position: relative; z-index: 1; margin-top: 50px; }
+        .hero-content h1 {
+            font-size: 4.5rem; color: #fff; font-weight: 800; line-height: 1.1; 
+            text-shadow: -2px -2px 0 #2c3e50, 2px -2px 0 #2c3e50, -2px 2px 0 #2c3e50, 2px 2px 0 #2c3e50, 0px 5px 20px rgba(0,0,0,0.8);
+            letter-spacing: 2px;
+        }
+
+        .container { max-width: 1200px; margin: -50px auto 0; padding: 0 20px 60px; position: relative; z-index: 2; }
+        h2.section-title { font-size: 1.5rem; color: #000; font-weight: 700; margin-bottom: 20px; border-left: 4px solid #1a1a1a; padding-left: 10px;}
+
+        /* --- Advanced Gallery Slider --- */
+        .gallery-wrapper { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 40px; user-select: none; }
+        .gallery-slider { 
+            display: flex; overflow-x: auto; gap: 20px; padding-bottom: 15px; 
+            scrollbar-width: none; -ms-overflow-style: none;
+            cursor: grab; /* เปลี่ยน Cursor ให้รู้ว่าลากได้ */
+        }
+        .gallery-slider:active { cursor: grabbing; }
+        .gallery-slider::-webkit-scrollbar { display: none; }
+        .gallery-item { 
+            min-width: 250px; height: 180px; border-radius: 10px; overflow: hidden; 
+            background: #000; flex-shrink: 0; transition: transform 0.3s; pointer-events: none; /* กันบั๊กตอนลากเมาส์ทับรูป */
+        }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; transition: 0.3s; pointer-events: none; }
+
+        .featured-room { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: flex; gap: 40px; align-items: center; margin-bottom: 40px; }
+        .room-image { flex: 1; border-radius: 10px; overflow: hidden; max-height: 350px; }
+        .room-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .room-info { flex: 1; }
+        .room-info h3 { font-size: 1.8rem; color: #1a1a1a; margin-bottom: 10px; }
+        .room-desc { font-size: 1rem; color: #666; line-height: 1.6; margin-bottom: 20px; }
+        .facilities-list { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .facilities-list li { color: #444; font-size: 0.95rem; display: flex; align-items: center; gap: 8px;}
+        .facilities-list li i { color: #1a1a1a; font-size: 0.8rem; }
+
+        .check-status-section { background: #f9f9f9; padding: 30px; border-radius: 15px; text-align: center; border: 1px solid #eee; }
+        .status-form { display: flex; justify-content: center; gap: 10px; max-width: 500px; margin: 15px auto 0; }
+        .input-status { flex: 1; padding: 12px 20px; border: 1px solid #ccc; border-radius: 30px; font-size: 1rem; outline: none; }
+        .btn-check { background: #1a1a1a; color: white; border: none; padding: 0 25px; border-radius: 30px; cursor: pointer; transition: 0.3s; font-weight: bold; }
+        .btn-check:hover { background: #333; }
+        .status-result { margin-top: 20px; padding: 15px; border-radius: 10px; display: none; }
+        .status-pending { background: #fff8e1; color: #f57f17; border: 1px solid #ffe082; }
+        .status-confirmed { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; } 
+            .hero-content h1 { font-size: 3rem; }
+            .featured-room { flex-direction: column; gap: 20px; }
+            .status-form { flex-direction: column; }
+            .btn-check { padding: 12px; margin-top: 5px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar-menu" id="sidebarMenu">
+        <div class="sidebar-header">
+            <strong>เมนูหลัก</strong>
+            <i class="fas fa-times" style="cursor:pointer;" onclick="toggleSidebar()"></i>
+        </div>
+        <a href="index.html" class="side-link"><i class="fas fa-home"></i> หน้าหลัก</a>
+        <a href="tenant_reports.html" class="side-link"><i class="fas fa-tools"></i> แจ้งซ่อม / ปัญหา</a>
+        <a href="tenant_bills.html" class="side-link"><i class="fas fa-file-invoice-dollar"></i> ข้อมูลบิลชำระเงิน</a>
+        <a href="#" class="side-link"><i class="fas fa-headset"></i> ติดต่อเรา</a>
+    </div>
+
+    <header id="navbar">
+        <div class="header-left">
+            <i class="fas fa-bars menu-toggle" id="menuToggle" onclick="toggleSidebar()"></i>
+            <div class="logo">THE ONE HOUSE 3</div>
+        </div>
+        
+        <nav>
+            <ul class="nav-links" id="mainLinks">
+                <li><a href="index.html" style="color:white; font-weight:bold;">หน้าหลัก</a></li>
+                <li><a href="select_role.html">จองห้อง</a></li>
+                <li><a href="rules.html">กฎหอพัก</a></li>
+                <li><a href="reviews.html">รีวิว</a></li>
+            </ul>
+        </nav>
+
+        <div class="header-right">
+            <a href="select_role.html" class="btn-login" id="loginBtn">เข้าสู่ระบบ</a>
+            
+            <div class="user-actions" id="userMenu">
+                <div class="icon-wrapper">
+                    <i class="fas fa-bell" onclick="toggleDrop('notifDrop')"></i>
+                    <div class="dropdown-menu" id="notifDrop">
+                        <h4>การแจ้งเตือน</h4>
+                        <div style="text-align:center; color:#888; padding: 10px 0; font-size:0.9rem;">ไม่มีแจ้งเตือนใหม่</div>
+                    </div>
+                </div>
+                <div class="icon-wrapper">
+                    <i class="fas fa-user-circle" style="font-size: 1.5rem;" onclick="toggleDrop('profileDrop')"></i>
+                    <div class="dropdown-menu" id="profileDrop">
+                        <h4><i class="fas fa-user"></i> <span id="profileName">ผู้ใช้งาน</span></h4>
+                        <a href="tenant_bills.html" class="drop-item">บิลค่าน้ำ/ค่าไฟของฉัน</a>
+                        <a href="tenant_reports.html" class="drop-item">ประวัติการแจ้งซ่อม</a>
+                        <a href="#" onclick="logout()" class="btn-logout-drop"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>WELCOME TO<br>THE ONE HOUSE 3</h1>
+        </div>
+    </section>
+
+    <main class="container">
+        
+        <div class="gallery-wrapper">
+            <h2 class="section-title">บริเวณหอพัก / ภายใน</h2>
+            <div class="gallery-slider" id="gallerySlider">
+                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?q=80&w=2069"></div>
+                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1522771753035-1a5b6562f3ba?q=80&w=2070"></div>
+                <div class="gallery-item"><img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=2080"></div>
+            </div>
+        </div>
+
+        <div class="featured-room">
+            <div class="room-image">
+                <img id="featImg" src="https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?q=80&w=2070" alt="ห้องแนะนำ">
+            </div>
+            <div class="room-info">
+                <h2 class="section-title" style="border:none; padding:0; margin-bottom:5px;">ห้องแนะนำ 🔥</h2>
+                <h3 id="featTitle">ห้อง Standard Room</h3>
+                <p id="featDesc" class="room-desc">พื้นที่กว้างขวาง ใกล้มหาวิทยาลัยพะเยา สิ่งอำนวยความสะดวกครบครัน พร้อมเข้าอยู่ได้ทันที</p>
+                <ul id="featFacilities" class="facilities-list">
+                    <li><i class="fas fa-check-circle"></i> เตียง 5.5 ฟุต</li>
+                    <li><i class="fas fa-check-circle"></i> เครื่องทำน้ำอุ่น</li>
+                    <li><i class="fas fa-check-circle"></i> แอร์ / ตู้เย็น</li>
+                    <li><i class="fas fa-check-circle"></i> ตู้เสื้อผ้าบิวท์อิน</li>
+                </ul>
+            </div>
+        </div>
+
+        <section class="check-status-section" id="guestStatusCheck">
+            <h2 style="color:#1a1a1a; margin-bottom:5px;"><i class="fas fa-search"></i> ตรวจสอบสถานะการจอง</h2>
+            <p style="color:#666; font-size:0.9rem;">กรอกเบอร์โทรศัพท์ที่ใช้จองเพื่อดูผลการอนุมัติ</p>
+            
+            <div class="status-form">
+                <input type="tel" id="checkPhone" class="input-status" placeholder="เบอร์โทรศัพท์...">
+                <button onclick="checkBookingStatus()" class="btn-check">ค้นหา</button>
+            </div>
+            <div id="statusResult" class="status-result"></div>
+        </section>
+
+    </main>
+
+    <footer style="background: #1a1a1a; color: #888; text-align: center; padding: 20px; font-size: 0.9rem;">
+        <p>&copy; The One House 3 All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // 1. ระบบ Auth
+        const MY_ROOM = localStorage.getItem('current_logged_in_room');
+        if (MY_ROOM) {
+            document.getElementById('loginBtn').style.display = 'none';
+            document.getElementById('userMenu').style.display = 'flex';
+            document.getElementById('menuToggle').style.display = 'block'; 
+            document.getElementById('mainLinks').style.display = 'none'; 
+            document.getElementById('guestStatusCheck').style.display = 'none'; 
+            document.getElementById('profileName').innerText = "ห้อง " + MY_ROOM;
+        }
+
+        // 2. ระบบ Dropdown / Sidebar
+        function toggleDrop(id) {
+            if(id !== 'notifDrop') document.getElementById('notifDrop').classList.remove('active');
+            if(id !== 'profileDrop') document.getElementById('profileDrop').classList.remove('active');
+            document.getElementById(id).classList.toggle('active');
+        }
+        window.onclick = function(event) {
+            if (!event.target.matches('.fa-bell') && !event.target.matches('.fa-user-circle')) {
+                document.getElementById('notifDrop').classList.remove('active');
+                document.getElementById('profileDrop').classList.remove('active');
+            }
+        }
+        function toggleSidebar() {
+            const menu = document.getElementById('sidebarMenu');
+            const overlay = document.getElementById('sidebarOverlay');
+            if(menu.classList.contains('open')) {
+                menu.classList.remove('open');
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.style.display = 'none', 300);
+            } else {
+                overlay.style.display = 'block';
+                setTimeout(() => { overlay.style.opacity = '1'; menu.classList.add('open'); }, 10);
+            }
+        }
+        function logout() { localStorage.removeItem('current_logged_in_room'); window.location.href = 'index.html'; }
+
+        // 3. ระบบ Drag & Drop Swipe สไลด์ภาพ
+        const slider = document.getElementById('gallerySlider');
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+        let autoScrollInterval;
+        let isHovering = false;
+
+        // เลื่อนด้วยเมาส์ (Click & Drag)
+        slider.addEventListener('mousedown', (e) => {
+            isDown = true;
+            startX = e.pageX - slider.offsetLeft;
+            scrollLeft = slider.scrollLeft;
+        });
+        slider.addEventListener('mouseleave', () => { isDown = false; isHovering = false; });
+        slider.addEventListener('mouseup', () => { isDown = false; });
+        slider.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - slider.offsetLeft;
+            const walk = (x - startX) * 2; // ความเร็วตอนลาก
+            slider.scrollLeft = scrollLeft - walk;
+        });
+
+        // เลื่อนอัตโนมัติ
+        slider.addEventListener('mouseenter', () => isHovering = true);
+        
+        function startAutoScroll() {
+            if (!isHovering && !isDown) {
+                slider.scrollLeft += 1;
+                // ถ้าเลื่อนจนสุดขอบขวาแล้ว ให้กระเด้งกลับไปซ้ายสุดแบบเนียนๆ
+                if(slider.scrollLeft >= (slider.scrollWidth - slider.clientWidth - 1)) {
+                    slider.scrollLeft = 0;
+                }
+            }
+            requestAnimationFrame(startAutoScroll);
+        }
+        startAutoScroll();
+
+        // 4. โหลดข้อมูลจากแอดมิน (รวมถึงแกลเลอรี่แบบ Dynamic)
+        window.addEventListener('load', function() {
+            const data = JSON.parse(localStorage.getItem('websiteData'));
+            if (data) {
+                if (data.featTitle) document.getElementById('featTitle').innerText = data.featTitle;
+                if (data.featDesc) document.getElementById('featDesc').innerText = data.featDesc;
+                if (data.featImg && data.featImg !== "") document.getElementById('featImg').src = data.featImg;
+                if (data.featFacilities) {
+                    const ul = document.getElementById('featFacilities');
+                    ul.innerHTML = ''; 
+                    const items = data.featFacilities.split(',');
+                    items.forEach(item => {
+                        ul.innerHTML += `<li><i class="fas fa-check-circle"></i> ${item.trim()}</li>`;
+                    });
+                }
+                
+                // ดึงรูป Gallery มาแสดงอัตโนมัติ ตามจำนวนที่แอดมินใส่ไว้
+                if (data.galleryImages && data.galleryImages.length > 0) {
+                    slider.innerHTML = '';
+                    data.galleryImages.forEach(imgSrc => {
+                        slider.innerHTML += `<div class="gallery-item"><img src="${imgSrc}"></div>`;
+                    });
+                }
+            }
+        });
+
+        function checkBookingStatus() {
+            const phone = document.getElementById('checkPhone').value.trim();
+            const resultBox = document.getElementById('statusResult');
+            if (!phone) { alert('กรุณากรอกเบอร์โทรศัพท์'); return; }
+            const bookings = JSON.parse(localStorage.getItem('booking_requests')) || [];
+            const myBooking = bookings.filter(b => b.customerPhone === phone).pop();
+            if (myBooking) {
+                let statusText = myBooking.status === 'pending' ? '⏳ รอการตรวจสอบจากเจ้าหน้าที่' : '✅ การจองได้รับการอนุมัติแล้ว!';
+                let statusClass = myBooking.status === 'pending' ? 'status-pending' : 'status-confirmed';
+                resultBox.innerHTML = `<h3 style="margin-bottom:5px;">คุณ ${myBooking.customerName}</h3><div style="font-size:1.1rem; font-weight:bold;">${statusText}</div><p style="margin-top:5px; font-size:0.9rem;">ห้องที่จอง: ${myBooking.roomId}</p>`;
+                resultBox.className = 'status-result ' + statusClass;
+                resultBox.style.display = 'block';
+            } else {
+                resultBox.innerHTML = `<span style="color:#d32f2f;">ไม่พบข้อมูลการจองของเบอร์โทรศัพท์นี้</span>`;
+                resultBox.className = 'status-result';
+                resultBox.style.background = '#fff';
+                resultBox.style.border = '1px solid #ddd';
+                resultBox.style.display = 'block';
+            }
+        }
+    </script>
+
+</body>
+</html>

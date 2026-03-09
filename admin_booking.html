@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายการจองห้องพัก - The One House 3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+      :root { 
+        --sidebar-bg: #000000; --sidebar-active: #2b2b2b; --text-color: #ffffff;
+        --bg-body: #ffffff; --primary: #111111; --sidebar-width: 260px; 
+      }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Kanit', sans-serif; }
+        body { background-color: var(--bg-body); display: flex; min-height: 100vh; }
+        
+        /* --- Sidebar (ดีไซน์ใหม่ ขอบมน ตัวหนังสือขาว) --- */
+        .sidebar { 
+            width: var(--sidebar-width); 
+            background: var(--sidebar-bg); 
+            color: white; 
+            padding: 30px 20px; 
+            position: fixed; 
+            height: 100%; 
+            display: flex; 
+            flex-direction: column; 
+            z-index: 10; 
+        }
+        .sidebar-brand { 
+            font-size: 1.5rem; 
+            font-weight: 800; 
+            color: #fff; 
+            margin-bottom: 30px; 
+            padding-left: 15px; 
+            letter-spacing: 0.5px; 
+        }
+        .menu-item { 
+            display: flex; 
+            align-items: center; 
+            padding: 15px 20px; 
+            color: #ffffff; 
+            text-decoration: none; 
+            border-radius: 12px; 
+            margin-bottom: 8px; 
+            font-weight: 500; 
+            font-size: 1.1rem; 
+            transition: 0.2s; 
+        }
+        .menu-item i { 
+            margin-right: 15px; 
+            width: 25px; 
+            font-size: 1.2rem; 
+            text-align: center; 
+        }
+        .menu-item.active { 
+            background-color: var(--sidebar-active); 
+            color: white; 
+            font-weight: 600; 
+        }
+        .menu-item:hover:not(.active) { 
+            background-color: rgba(255,255,255,0.08); 
+        }
+        .mt-auto { margin-top: auto; }
+
+        /* --- Main Content --- */
+        .main-content { margin-left: var(--sidebar-width); flex: 1; padding: 40px; }
+        
+        .header-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .header-section h2 { color: var(--primary); font-size: 1.6rem; font-weight: 600; }
+        
+        .btn-clear { background: #fff8f8; border: 1px solid #ef5350; color: #d32f2f; padding: 10px 20px; border-radius: 8px; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
+        .btn-clear:hover { background: #ef5350; color: white; }
+
+        /* --- Table Design --- */
+        .table-container { 
+            background: white; border-radius: 15px; overflow: hidden; 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08); border: 1px solid #eee; padding: 20px;
+        }
+        table { width: 100%; border-collapse: collapse; text-align: center; }
+        th { font-weight: 500; font-size: 0.95rem; color: #555; padding: 15px 10px; border-bottom: 2px solid #eee; }
+        td { padding: 15px 10px; border-bottom: 1px solid #f5f5f5; font-size: 0.9rem; color: #333; vertical-align: middle; }
+        
+        .badge { padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: 500; color: white; display: inline-block; }
+        .bg-warning { background-color: #f5a623; } 
+        .bg-success { background-color: #4caf50; } 
+        
+        .action-btns { display: flex; gap: 8px; justify-content: center; }
+        .btn-act { 
+            width: 35px; height: 35px; border-radius: 8px; border: none; color: white; 
+            cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; transition: 0.2s;
+        }
+        .btn-view { background: #444; }
+        .btn-view:hover { background: #111; }
+        .btn-delete { background: #d32f2f; }
+        .btn-delete:hover { background: #b71c1c; }
+
+        /* --- Modal Design --- */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); align-items: center; justify-content: center; backdrop-filter: blur(3px); }
+        .modal-content { background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 500px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); position: relative; max-height: 90vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .modal-header h3 { font-size: 1.3rem; color: #111; }
+        .close-btn { cursor: pointer; font-size: 1.5rem; color: #888; transition: 0.2s; }
+        .close-btn:hover { color: #d32f2f; }
+
+        .detail-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.95rem; border-bottom: 1px dashed #f0f0f0; padding-bottom: 8px; }
+        .detail-label { color: #666; font-weight: 500; }
+        .detail-value { color: #111; font-weight: 600; text-align: right; }
+        
+        .slip-container { margin-top: 20px; text-align: center; background: #f9f9f9; padding: 15px; border-radius: 10px; border: 1px solid #eee; }
+        .slip-container h4 { margin-bottom: 10px; color: #555; font-size: 1rem; text-align: left; }
+        #slipImage { max-width: 100%; max-height: 350px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: none; cursor: pointer; transition: 0.3s; }
+        #slipImage:hover { filter: brightness(0.9); }
+        .no-slip { color: #ef5350; font-size: 0.9rem; display: none; padding: 20px; background: #fff8f8; border-radius: 8px; border: 1px dashed #ef5350; }
+        
+        .modal-actions { display: flex; gap: 15px; margin-top: 25px; }
+        .btn-cancel { flex: 1; background: #fff8f8; color: #d32f2f; border: 1px solid #ef5350; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .btn-cancel:hover { background: #ef5350; color: white; }
+        .btn-approve { flex: 1; background: #4caf50; color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-approve:hover { background: #388e3c; }
+        .btn-approve:disabled { background: #ccc; cursor: not-allowed; }
+        
+        /* Modal ซูมรูป */
+        #imageZoomModal { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); align-items: center; justify-content: center; }
+        #imageZoomModal img { max-width: 90%; max-height: 90vh; border-radius: 10px; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        .close-zoom { position: absolute; top: 20px; right: 30px; color: white; font-size: 2.5rem; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="sidebar-brand">THE ONE HOUSE 3</div>
+        <a href="admin_dashboard.html" class="menu-item"><i class="fas fa-home"></i> ภาพรวม </a>
+        <a href="admin_rooms.html" class="menu-item"><i class="fas fa-bed"></i> จัดการห้องพัก</a>
+        <a href="#" class="menu-item active"><i class="fas fa-list-alt"></i> รายการจอง</a>
+        <a href="admin_utilities.html" class="menu-item"><i class="fas fa-faucet"></i> ค่าน้ำ/ไฟ/เน็ต</a>
+        <a href="admin_reports.html" class="menu-item"><i class="fas fa-tools"></i> รายการแจ้งซ่อม</a>
+        <a href="index.html" class="menu-item mt-auto"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</a>
+    </nav>
+
+    <main class="main-content">
+        <div class="header-section">
+            <h2>รายการคำขอจองห้องพัก</h2>
+            <button class="btn-clear" onclick="clearBookings()">
+                <i class="fas fa-trash-alt"></i> ล้างประวัติและข้อมูลเสียทั้งหมด
+            </button>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>เวลา</th>
+                        <th>สถานะ</th>
+                        <th>ห้อง</th>
+                        <th>ชื่อลูกค้า</th>
+                        <th>เบอร์โทร (พาสเวิร์ด)</th>
+                        <th>วันเข้าอยู่</th>
+                        <th>จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody id="bookingTableBody">
+                    </tbody>
+            </table>
+        </div>
+    </main>
+
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>รายละเอียดการจอง</h3>
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">ชื่อลูกค้า:</span>
+                <span class="detail-value" id="mdName"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">เบอร์โทร:</span>
+                <span class="detail-value" id="mdPhone"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">ห้องที่จอง:</span>
+                <span class="detail-value" id="mdRoom"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">วันที่เข้าอยู่:</span>
+                <span class="detail-value" id="mdDate"></span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">หมายเหตุ:</span>
+                <span class="detail-value" id="mdNote"></span>
+            </div>
+            
+            <div class="slip-container">
+                <h4><i class="fas fa-image"></i> หลักฐานการโอนเงิน:</h4>
+                <img id="slipImage" src="" alt="สลิป" onclick="zoomImage()" title="คลิกเพื่อขยายรูป">
+                <div class="no-slip" id="noSlipMsg"><i class="fas fa-exclamation-circle"></i> ไม่มีรูปสลิป หรือไฟล์รูปเสีย (กรุณาลบรายการนี้ทิ้ง)</div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal()">ปิด</button>
+                <button class="btn-approve" id="btnApproveAction" onclick="confirmApprove()">
+                    <i class="fas fa-check-circle"></i> อนุมัติการจอง
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="imageZoomModal" onclick="this.style.display='none'">
+        <span class="close-zoom">&times;</span>
+        <img id="zoomedImage" src="">
+    </div>
+
+    <script>
+        let currentViewIndex = null;
+
+        function renderTable() {
+            const tbody = document.getElementById('bookingTableBody');
+            tbody.innerHTML = '';
+            let bookings = JSON.parse(localStorage.getItem('booking_requests')) || [];
+            
+            if (bookings.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="color:#888; padding:30px;">ไม่มีรายการคำขอจองห้องพักในขณะนี้</td></tr>`;
+                return;
+            }
+
+            bookings.reverse().forEach((b, index) => {
+                let realIndex = bookings.length - 1 - index;
+                let isApproved = b.status === 'approved';
+                let statusBadge = isApproved 
+                    ? `<span class="badge bg-success">อนุมัติแล้ว</span>`
+                    : `<span class="badge bg-warning">รอตรวจสอบ</span>`;
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${b.time || '-'}</td>
+                        <td>${statusBadge}</td>
+                        <td><strong>${b.roomId || '-'}</strong></td>
+                        <td>${b.customerName || '-'}</td>
+                        <td>${b.customerPhone || '-'}</td>
+                        <td>${b.moveInDate || '-'}</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn-act btn-view" title="ดูรายละเอียดและอนุมัติ" onclick="viewDetails(${realIndex})"><i class="fas fa-eye"></i></button>
+                                <button class="btn-act btn-delete" title="ลบรายการ" onclick="deleteBooking(${realIndex})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function viewDetails(index) {
+            currentViewIndex = index;
+            let bookings = JSON.parse(localStorage.getItem('booking_requests')) || [];
+            let b = bookings[index];
+
+            document.getElementById('mdName').innerText = b.customerName || '-';
+            document.getElementById('mdPhone').innerText = b.customerPhone || '-';
+            document.getElementById('mdRoom').innerText = b.roomId || '-';
+            document.getElementById('mdDate').innerText = b.moveInDate || '-';
+            document.getElementById('mdNote').innerText = b.note || '-';
+
+            const slipImg = document.getElementById('slipImage');
+            const noSlipMsg = document.getElementById('noSlipMsg');
+            
+            // เช็คว่ามีรูปสลิปจริงๆ ไหม (ต้องขึ้นต้นด้วย data:image)
+            if (b.slip && b.slip.startsWith('data:image')) {
+                slipImg.src = b.slip;
+                slipImg.style.display = 'block';
+                noSlipMsg.style.display = 'none';
+            } else {
+                slipImg.src = '';
+                slipImg.style.display = 'none';
+                noSlipMsg.style.display = 'block';
+            }
+
+            // จัดการปุ่มอนุมัติ
+            const btnApprove = document.getElementById('btnApproveAction');
+            if (b.status === 'approved') {
+                btnApprove.disabled = true;
+                btnApprove.innerHTML = `<i class="fas fa-check-double"></i> อนุมัติแล้ว`;
+                btnApprove.style.background = "#ccc";
+            } else {
+                btnApprove.disabled = false;
+                btnApprove.innerHTML = `<i class="fas fa-check-circle"></i> อนุมัติการจอง`;
+                btnApprove.style.background = "#4caf50";
+            }
+
+            document.getElementById('detailModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').style.display = 'none';
+        }
+
+        function zoomImage() {
+            const imgSrc = document.getElementById('slipImage').src;
+            document.getElementById('zoomedImage').src = imgSrc;
+            document.getElementById('imageZoomModal').style.display = 'flex';
+        }
+
+        function confirmApprove() {
+            if(currentViewIndex === null) return;
+            
+            let bookings = JSON.parse(localStorage.getItem('booking_requests')) || [];
+            let bookingData = bookings[currentViewIndex];
+
+            if(!confirm(`ยืนยันการอนุมัติห้อง ${bookingData.roomId}?\nระบบจะตั้งค่าห้องเป็น 'ไม่ว่าง' และใช้เบอร์โทรลูกค้าเป็นรหัสผ่านทันที`)) return;
+
+            let roomsData = JSON.parse(localStorage.getItem('admin_all_rooms')) || [];
+            let roomToUpdate = roomsData.find(r => r.id === bookingData.roomId || r.id === String(bookingData.roomId).padStart(2, '0'));
+            
+            if(roomToUpdate) {
+                roomToUpdate.status = 'occupied'; 
+                roomToUpdate.tenant = bookingData.customerName; 
+                roomToUpdate.tenantPhone = bookingData.customerPhone; 
+                localStorage.setItem('admin_all_rooms', JSON.stringify(roomsData));
+            } else {
+                alert('⚠️ ไม่พบเลขห้อง ' + bookingData.roomId + ' ในระบบ\nกรุณาไปสร้างห้องเลขนี้ในหน้า "จัดการห้องพัก" ก่อนครับ');
+                return;
+            }
+
+            bookingData.status = 'approved';
+            localStorage.setItem('booking_requests', JSON.stringify(bookings));
+            
+            alert(`✅ อนุมัติสำเร็จ! ระบบบันทึกข้อมูลเรียบร้อยแล้ว`);
+            closeModal();
+            renderTable();
+        }
+
+        function deleteBooking(index) {
+            if(confirm("ต้องการลบรายการจองนี้ทิ้งใช่หรือไม่?")) {
+                let bookings = JSON.parse(localStorage.getItem('booking_requests')) || [];
+                bookings.splice(index, 1);
+                localStorage.setItem('booking_requests', JSON.stringify(bookings));
+                renderTable();
+            }
+        }
+
+        function clearBookings() {
+            if(confirm("คุณต้องการล้างประวัติการจอง รวมถึงรายการที่ Error ทั้งหมดทิ้งใช่หรือไม่?")) {
+                localStorage.removeItem('booking_requests');
+                renderTable();
+            }
+        }
+
+        window.onload = renderTable;
+    </script>
+</body>
+</html>

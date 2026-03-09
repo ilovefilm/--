@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายละเอียดการจอง - THE ONE HOUSE 3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Kanit', sans-serif; }
+        body { background-color: #666666; color: #333; overflow-x: hidden; }
+        header { position: fixed; top: 0; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; z-index: 1000; background: #1a1a1a; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .logo { font-size: 1.5rem; font-weight: 800; color: #ffffff; }
+        .nav-links { list-style: none; display: flex; gap: 30px; }
+        .nav-links li a { text-decoration: none; color: #ccc; font-weight: 400; font-size: 0.95rem; }
+        .main-wrapper { margin-top: 60px; padding: 40px 20px; display: flex; justify-content: center; min-height: calc(100vh - 60px); }
+        .view-section { display: none; width: 100%; max-width: 1100px; animation: fadeIn 0.4s; }
+        .view-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .detail-card { display: flex; background: #e0e0e0; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3); min-height: 600px; }
+        .left-dark-panel { width: 30%; background: #2d2d2d; color: white; padding: 30px 20px; display: flex; flex-direction: column; }
+        .room-gallery { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+        .room-gallery img { width: 100%; border-radius: 5px; object-fit: cover; height: 150px; cursor: pointer; border: 2px solid transparent; }
+        .right-light-panel { width: 70%; padding: 50px; position: relative; background: #e0e0e0; }
+        .info-box { background: white; padding: 25px 30px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #ccc; box-shadow: 2px 2px 0px rgba(0,0,0,0.1); }
+        .btn-room { width: 160px; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; border: 2px solid #111; float: right; margin-left: 10px; }
+        .checkout-card { background: #333; color: white; padding: 35px; border-radius: 15px; flex: 1; }
+        .form-control { width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 10px; background: #222; color: white; border: 1px solid #555; outline: none; transition: 0.3s; }
+        .form-control:focus { border-color: #4caf50; box-shadow: 0 0 8px rgba(76, 175, 80, 0.4); }
+        .success-card { background: white; border-radius: 20px; padding: 50px; text-align: center; }
+        
+        @media (max-width: 768px) {
+            .detail-card { flex-direction: column; }
+            .left-dark-panel, .right-light-panel { width: 100%; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <i class="fas fa-bars menu-toggle" style="color:white; cursor:pointer; font-size:1.5rem;"></i>
+            <div class="logo">THE ONE HOUSE 3</div>
+        </div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html">หน้าหลัก</a></li>
+                <li><a href="booking.html" style="color:white; font-weight:bold;">จองห้อง</a></li>
+                <li><a href="rules.html">กฎหอพัก</a></li>
+                <li><a href="reviews.html">รีวิว</a></li>
+            </ul>
+        </nav>
+        <div id="userNavDisplay" style="color: white; display: flex; align-items: center;">
+            <i class="fas fa-user-circle" style="font-size: 1.6rem; cursor: pointer;" onclick="window.location.href='select_role.html'"></i>
+        </div>
+    </header>
+
+    <main class="main-wrapper">
+        <section id="view-detail" class="view-section active">
+            <div class="detail-card">
+                <div class="left-dark-panel">
+                    <a href="booking.html" style="color:white; text-decoration:none; margin-bottom:20px; display:block;"><i class="fas fa-arrow-left"></i> กลับไปเลือกห้อง</a>
+                    <h3 style="margin-bottom:15px; color:#4caf50;">ห้อง <span class="display-room-id">01</span></h3>
+                    <div class="room-gallery" id="roomGallery"></div>
+                </div>
+                <div class="right-light-panel">
+                    <h2 style="float:right;">THE ONE HOUSE 3</h2><br><br>
+                    <div class="info-box"><h4><i class="fas fa-credit-card"></i> รายละเอียดค่าใช้จ่าย</h4><p>ค่าเช่าห้อง : <span class="val-price">3,500</span> บาท/เดือน</p></div>
+                    <div class="info-box"><h4><i class="fas fa-info-circle"></i> รายละเอียด/กฎระเบียบ</h4><p id="room-desc-text" style="white-space:pre-line; color:#555;">กำลังโหลด...</p></div>
+                    <div class="info-box" style="border-left: 5px solid #4caf50;"><h4><i class="fas fa-check-square"></i> ยอดรวมวันเข้าอยู่</h4><p>ยอดรวมสุทธิ: <b id="val-total" style="color:#2e7d32; font-size:1.4rem;">7,000</b> บาท</p></div>
+                    <button class="btn-room" style="background:#111; color:white;" onclick="switchView('checkout')">ดำเนินการจอง</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-checkout" class="view-section">
+            <h2 style="color:white; text-align:center; margin-bottom:20px;">ยืนยันการจองห้อง <span class="display-room-id">01</span></h2>
+            <div style="display:flex; gap:30px; flex-wrap: wrap;">
+                <div class="checkout-card" style="text-align:center; min-width: 300px;">
+                    <h4>ช่องทางโอนเงิน</h4><h2 style="color:#4caf50; margin:15px 0; letter-spacing: 2px;">123-456789-0</h2>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" style="width:150px; border:5px solid white; margin-bottom:15px; border-radius:10px;">
+                    <p>ยอดโอน: <b id="checkout-total" style="color:#4caf50; font-size:1.4rem;">7,000</b> บาท</p>
+                    <input type="file" id="slipInput" accept="image/*" style="display:none;" onchange="handleSlip()">
+                    <button onclick="document.getElementById('slipInput').click()" style="width:100%; padding:10px; margin-top:10px; background:none; color:white; border:1px solid white; cursor:pointer; border-radius:20px;"><i class="fas fa-upload"></i> อัปโหลดรูปสลิป</button>
+                    <p id="slipName" style="color:#4caf50; font-size:0.85rem; margin-top:10px;"></p>
+                </div>
+                <div class="checkout-card" style="min-width: 300px;">
+                    <form onsubmit="submitBooking(event)">
+                        <label style="display:block; margin-bottom:8px; font-size:0.9rem; color:#ddd;">ชื่อ-นามสกุล (ผู้จอง)</label>
+                        <input type="text" id="bookName" class="form-control" required placeholder="ระบุชื่อ-นามสกุลจริง">
+                        
+                        <label style="display:block; margin-bottom:8px; font-size:0.9rem; color:#ddd;">อีเมลติดต่อ (ถ้ามี)</label>
+                        <input type="email" id="bookEmail" class="form-control" placeholder="user@example.com">
+
+                        <label style="display:block; margin-bottom:8px; font-size:0.9rem; color:#ddd;">เบอร์โทรศัพท์ (ใช้เป็นพาสเวิร์ดเข้าสู่ระบบครั้งหน้า)</label>
+                        <input type="tel" id="bookPhone" class="form-control" placeholder="เช่น 0812345678" required>
+                        
+                        <label style="display:block; margin-bottom:8px; font-size:0.9rem; color:#ddd;">วันที่ต้องการเข้าอยู่</label>
+                        <input type="date" id="bookDate" class="form-control" required>
+                        
+                        <div style="display:flex; gap:10px; margin-top:15px;">
+                            <button type="button" style="flex:1; background:#555; color:white; border:none; padding:15px; border-radius:10px; cursor:pointer;" onclick="switchView('detail')">ย้อนกลับ</button>
+                            <button type="submit" style="flex:2; background:#4caf50; color:white; border:none; padding:15px; border-radius:10px; font-weight:bold; cursor:pointer;">ยืนยันการจอง</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-success" class="view-section">
+            <div class="success-card">
+                <i class="fas fa-check-circle" style="font-size:4rem; color:#4caf50; margin-bottom:20px;"></i>
+                <h2 style="color:#111;">ส่งคำขอจองเสร็จสิ้น</h2><br>
+                <p style="color:#333;">ชื่อผู้จอง: <b id="resName">-</b> | ห้อง: <b class="display-room-id">01</b></p>
+                <p style="color:#333;">วันที่เข้าอยู่: <b id="resDate">-</b></p><br>
+                <p style="color:#666; font-size:0.9rem; margin-bottom:20px;">กรุณารอแอดมินตรวจสอบสลิปและอนุมัติการเข้าพักครับ</p>
+                <button class="btn-room" style="float:none; background:#111; color:white;" onclick="window.location.href='index.html'">กลับหน้าหลัก</button>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        let currentRoomId = "01"; 
+        let slipBase64 = null;
+
+        function initAuth() {
+            const session = localStorage.getItem('guest_user_session');
+            const navDisplay = document.getElementById('userNavDisplay');
+            if(!session) {
+                alert("กรุณาเข้าสู่ระบบก่อนดำเนินการจองครับ");
+                window.location.href = 'login_guest.html';
+                return;
+            }
+            const user = JSON.parse(session);
+            navDisplay.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <span style="font-size: 0.95rem; font-weight: 500; color: #4caf50;">
+                        <i class="fas fa-check-circle"></i> ${user.name}
+                    </span>
+                    <button onclick="logout()" style="background: transparent; border: 1px solid #ef5350; color: #ef5350; padding: 6px 15px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; font-weight: bold; transition: 0.3s;" onmouseover="this.style.background='#ef5350'; this.style.color='white';" onmouseout="this.style.background='transparent'; this.style.color='#ef5350';">
+                        ออกจากระบบ
+                    </button>
+                </div>
+            `;
+            // ดึงค่ามาใส่เบื้องต้น แต่ปลด readonly แล้วทำให้แก้ไขได้
+            if(user.name) document.getElementById('bookName').value = user.name;
+            if(user.email) document.getElementById('bookEmail').value = user.email;
+        }
+
+        function logout() {
+            if(confirm("คุณต้องการออกจากระบบใช่หรือไม่?")) {
+                localStorage.removeItem('guest_user_session');
+                window.location.href = 'index.html'; 
+            }
+        }
+
+        function switchView(id) { 
+            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active')); 
+            document.getElementById('view-' + id).classList.add('active'); 
+            window.scrollTo(0,0); 
+        }
+
+        function loadRoomDetail() {
+            const urlParams = new URLSearchParams(window.location.search); 
+            currentRoomId = urlParams.get('room') || "01";
+            document.querySelectorAll('.display-room-id').forEach(el => el.innerText = currentRoomId);
+            const allRooms = JSON.parse(localStorage.getItem('admin_all_rooms')) || [];
+            const r = allRooms.find(item => item.id === currentRoomId);
+            if (r) {
+                const price = parseFloat(r.price) || 3500;
+                document.querySelectorAll('.val-price').forEach(el => el.innerText = price.toLocaleString());
+                document.getElementById('val-total').innerText = (price * 2).toLocaleString();
+                document.getElementById('checkout-total').innerText = (price * 2).toLocaleString();
+                document.getElementById('room-desc-text').innerText = r.desc || "ไม่มีรายละเอียดเพิ่มเติมสำหรับห้องนี้";
+                const gal = document.getElementById('roomGallery'); 
+                gal.innerHTML = '';
+                if (r.images && r.images.length > 0) {
+                    r.images.forEach(img => { gal.innerHTML += `<img src="${img}" onclick="window.open(this.src)">`; });
+                } else {
+                    gal.innerHTML = `<img src="https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?q=80&w=2070">`;
+                }
+            } else {
+                alert("ไม่พบข้อมูลห้องพักนี้ในระบบ");
+                window.location.href = 'booking.html';
+            }
+        }
+
+        function handleSlip() {
+            const file = document.getElementById('slipInput').files[0];
+            if (file) {
+                document.getElementById('slipName').innerText = "✓ แนบไฟล์แล้ว: " + file.name;
+                const reader = new FileReader(); 
+                reader.onload = (e) => slipBase64 = e.target.result; 
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function submitBooking(e) {
+            e.preventDefault(); 
+            if(!slipBase64) return alert("กรุณาแนบรูปสลิปโอนเงิน เพื่อให้แอดมินตรวจสอบครับ");
+            const name = document.getElementById('bookName').value;
+            const phone = document.getElementById('bookPhone').value;
+            const date = document.getElementById('bookDate').value;
+            let requests = JSON.parse(localStorage.getItem('booking_requests')) || [];
+            requests.push({ 
+                id: Date.now(), 
+                time: new Date().toLocaleString('th-TH'), 
+                status: 'pending', 
+                roomId: currentRoomId, 
+                customerName: name, 
+                customerPhone: phone, 
+                moveInDate: date, 
+                slip: slipBase64 
+            });
+            localStorage.setItem('booking_requests', JSON.stringify(requests));
+            document.getElementById('resName').innerText = name; 
+            document.getElementById('resDate').innerText = date;
+            switchView('success');
+        }
+
+        window.onload = () => {
+            initAuth();
+            loadRoomDetail();
+        };
+    </script>
+</body>
+</html>

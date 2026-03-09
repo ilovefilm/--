@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Login - The One House 3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Kanit', sans-serif; }
+        body {
+            height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background-image: url("ch7.jpg");
+            background-size: cover; background-position: center; position: relative;
+        }
+        body::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: 1; }
+        
+        .page-title {
+            position: relative; z-index: 2; color: #fff; font-size: 2.2rem; font-weight: 800;
+            letter-spacing: 2px; margin-bottom: 25px; text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .glass-card {
+            position: relative; z-index: 2; width: 90%; max-width: 420px;
+            background: rgba(255, 255, 255, 0.25); 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); 
+            border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 20px;
+            padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .back-btn { display: inline-block; color: #111; text-decoration: none; font-weight: 600; margin-bottom: 25px; font-size: 0.95rem; }
+        .back-btn:hover { color: #000; text-decoration: underline; }
+
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-label { display: block; margin-bottom: 8px; font-weight: 500; color: #111; font-size: 0.95rem; }
+        .form-control {
+            width: 100%; padding: 12px 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.6);
+            background: rgba(255, 255, 255, 0.6); font-size: 1rem; color: #111; outline: none; transition: 0.3s;
+        }
+        .form-control:focus { background: rgba(255, 255, 255, 0.9); box-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        
+        .btn-login {
+            width: 100%; background: #1a1a1a; color: white; border: none; padding: 14px;
+            border-radius: 10px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: 0.3s; margin-top: 10px;
+        }
+        .btn-login:hover { background: #000; transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+    <h1 class="page-title">THE ONE HOUSE 3</h1>
+    
+    <div class="glass-card">
+        <a href="select_role.html" class="back-btn"><i class="fas fa-chevron-left"></i> กลับ</a>
+        <h3 style="margin-bottom: 20px; color:#111; text-align:center;">สำหรับเจ้าของหอพัก </h3>
+        
+        <form onsubmit="loginOwner(event)">
+            <div class="form-group">
+                <label class="form-label">Admin Username</label>
+                <input type="text" id="adminUser" class="form-control" placeholder="Admin ID" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" id="adminPass" class="form-control" placeholder="••••••••" required>
+            </div>
+            
+            <button type="submit" class="btn-login">เข้าสู่ระบบจัดการหลังบ้าน</button>
+        </form>
+    </div>
+
+    <script>
+        function loginOwner(e) {
+            e.preventDefault();
+            
+            // ดึงค่าจากฟอร์มที่พิมพ์เข้ามา
+            const user = document.getElementById('adminUser').value;
+            const pass = document.getElementById('adminPass').value;
+
+            // ตรวจสอบ Username และ Password
+            if (user === "t1h" && pass === "3") {
+                alert("✅ ยืนยันสิทธิ์สำเร็จ! ยินดีต้อนรับเจ้าของหอพัก");
+                window.location.href = 'admin_dashboard.html';
+            } else {
+                alert("❌ การเข้าถึงถูกปฏิเสธ: Username หรือ Password ไม่ถูกต้อง!");
+                document.getElementById('adminPass').value = ''; // ล้างช่องรหัสผ่านเมื่อพิมพ์ผิด
+            }
+        }
+    </script>
+</body>
+</html>

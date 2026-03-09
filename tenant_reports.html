@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แจ้งซ่อม - The One House 3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* เปลี่ยนสีหลักเป็น ดำ-เทา-ขาว ตามภาพ */
+        :root { --primary: #111111; --secondary: #666666; --bg: #f9f9f9; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Kanit', sans-serif; }
+        body { background-color: var(--bg); padding: 20px; color: #333; padding-bottom: 80px; }
+        
+        .container { max-width: 600px; margin: 0 auto; }
+        
+        /* Header */
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { color: var(--primary); font-size: 1.8rem; }
+        .header p { color: #666; }
+
+        /* Form Card */
+        .card { 
+            background: white; padding: 25px; border-radius: 12px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid #f0f0f0; margin-bottom: 30px; 
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--primary); }
+        .form-control { width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 1rem; transition: 0.3s; background: #fff; }
+        
+        /* ปุ่มส่ง แคปซูลสีดำ */
+        .btn-submit { 
+            width: 100%; background: #000000; color: white; border: none; padding: 15px; 
+            border-radius: 50px; font-size: 1.1rem; cursor: pointer; font-weight: bold; transition: 0.3s; 
+        }
+        .btn-submit:hover { background: #333333; transform: translateY(-2px); }
+
+        /* History Section */
+        .history-title { border-left: 5px solid var(--primary); padding-left: 15px; margin-bottom: 20px; color: var(--primary); }
+        .history-card { background: white; padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 5px solid #ccc; position: relative; border-top: 1px solid #f0f0f0; border-right: 1px solid #f0f0f0; border-bottom: 1px solid #f0f0f0; }
+        
+        /* สีแจ้งเตือนสีแดง ตามภาพ */
+        .history-card.pending { border-left-color: #d32f2f; }
+        .history-card.done { border-left-color: #2e7d32; }
+        
+        .status-badge { position: absolute; top: 20px; right: 20px; font-size: 0.8rem; font-weight: bold; }
+        .status-pending { color: #d32f2f; }
+        .status-done { color: #2e7d32; }
+
+        /* รูปภาพในประวัติ */
+        .history-img { width: 100px; height: 100px; object-fit: cover; border-radius: 5px; margin-top: 10px; border: 1px solid #ddd; }
+
+        /* กล่องตอบกลับ สีฟ้าตามภาพ */
+        .admin-reply-box {
+            background: #e8f4fd; border: 1px solid #b6d4fe; padding: 15px; border-radius: 8px; margin-top: 15px; color: #084298; font-size: 0.95rem;
+        }
+
+        /* Bottom Nav */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; padding: 10px 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); border-top: 1px solid #eee; z-index: 99; }
+        .nav-item { flex: 1; text-align: center; color: #999; text-decoration: none; font-size: 0.8rem; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .nav-item.active { color: var(--primary); font-weight: 600; }
+        .nav-item i { font-size: 1.4rem; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>แจ้งซ่อม / ปัญหา</h1>
+            <p>กรอกข้อมูลและแนบรูปภาพได้เลยครับ</p>
+        </div>
+
+        <div class="card">
+            <div class="form-group">
+                <label class="form-label">เลขห้อง</label>
+                <input type="text" id="room" class="form-control" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">หัวข้อปัญหา</label>
+                <select id="topic" class="form-control">
+                    <option>ไฟฟ้า / หลอดไฟ</option>
+                    <option>น้ำประปา / ท่อรั่ว</option>
+                    <option>เครื่องปรับอากาศ</option>
+                    <option>อินเทอร์เน็ต</option>
+                    <option>เสียงรบกวน</option>
+                    <option>อื่นๆ</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">รายละเอียด</label>
+                <textarea id="detail" class="form-control" rows="4" placeholder="ระบุอาการเสีย..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">รูปภาพ (ถ้ามี)</label>
+                <input type="file" id="imageInput" class="form-control" accept="image/*">
+            </div>
+
+            <button class="btn-submit" onclick="submitReport()">แจ้งเรื่องทันที</button>
+        </div>
+
+        <h2 class="history-title">ประวัติการแจ้งของฉัน</h2>
+        <div id="history-list"></div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="tenant_bills.html" class="nav-item"><i class="fas fa-wallet"></i> บิล/ชำระเงิน</a>
+        <a href="#" class="nav-item active"><i class="fas fa-tools"></i> แจ้งซ่อม</a>
+        <a onclick="logout()" class="nav-item" style="cursor:pointer;"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</a>
+    </nav>
+
+    <script>
+        const MY_ROOM = localStorage.getItem('current_logged_in_room');
+        if (!MY_ROOM) {
+            alert("กรุณาเข้าสู่ระบบก่อนครับ");
+            window.location.href = 'login_tenant.html';
+        }
+        
+        // ใส่เลขห้องลงในช่องให้อัตโนมัติ
+        document.getElementById('room').value = MY_ROOM;
+
+        function loadHistory() {
+            const reports = JSON.parse(localStorage.getItem('admin_reports')) || [];
+            
+            // กรองให้แสดงเฉพาะประวัติของห้องตัวเองเท่านั้น
+            const myReports = reports.filter(r => r.room === MY_ROOM);
+            const list = document.getElementById('history-list');
+            list.innerHTML = '';
+
+            if (myReports.length === 0) {
+                list.innerHTML = '<p style="text-align:center; color:#999;">ยังไม่มีประวัติการแจ้งซ่อม</p>';
+                return;
+            }
+
+            myReports.slice().reverse().forEach(r => {
+                const isDone = r.status === 'done';
+                const statusText = isDone ? 'เสร็จสิ้น' : 'รอตรวจสอบ';
+                const statusClass = isDone ? 'status-done' : 'status-pending';
+                const cardClass = isDone ? 'done' : 'pending';
+
+                const imgHTML = r.image ? `<br><img src="${r.image}" class="history-img" onclick="window.open(this.src)">` : '';
+
+                let replyHTML = '';
+                if (r.reply) {
+                    replyHTML = `<div class="admin-reply-box"><i class="fas fa-user-shield"></i> <b>เจ้าของหอ:</b> "${r.reply}"</div>`;
+                }
+
+                list.innerHTML += `
+                    <div class="history-card ${cardClass}">
+                        <div class="status-badge ${statusClass}">
+                            <i class="fas fa-circle" style="font-size:8px;"></i> ${statusText}
+                        </div>
+                        <h3 style="margin-bottom:5px; padding-right:60px;">${r.topic}</h3>
+                        <div style="font-size:0.85rem; color:#888; margin-bottom:10px;">
+                            ${r.date} | ห้อง ${r.room}
+                        </div>
+                        <p style="color:#555;">${r.detail}</p>
+                        ${imgHTML}
+                        ${replyHTML}
+                    </div>
+                `;
+            });
+        }
+
+        function submitReport() {
+            const room = document.getElementById('room').value;
+            const topic = document.getElementById('topic').value;
+            const detail = document.getElementById('detail').value;
+            const fileInput = document.getElementById('imageInput');
+            const date = new Date().toLocaleString('th-TH');
+
+            if(!detail) { alert('กรุณากรอกรายละเอียดครับ'); return; }
+
+            const saveToStorage = (base64Image) => {
+                const newReport = {
+                    room: room, topic: topic, detail: detail, date: date,
+                    status: 'pending', reply: '',
+                    image: base64Image 
+                };
+
+                const reports = JSON.parse(localStorage.getItem('admin_reports')) || [];
+                reports.push(newReport);
+                localStorage.setItem('admin_reports', JSON.stringify(reports));
+
+                alert('แจ้งเรื่องเรียบร้อย! เจ้าของหอจะได้รับข้อมูลทันที');
+                
+                document.getElementById('detail').value = '';
+                document.getElementById('imageInput').value = '';
+                loadHistory(); 
+            };
+
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.readAsDataURL(fileInput.files[0]); 
+                reader.onload = function(e) {
+                    saveToStorage(e.target.result); 
+                };
+            } else {
+                saveToStorage(null); 
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('current_logged_in_room');
+            window.location.href = 'index.html';
+        }
+
+        loadHistory();
+    </script>
+</body>
+</html>

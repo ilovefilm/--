@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ชำระค่าเช่า - The One House 3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root { --primary: #111111; --secondary: #666666; --bg: #f9f9f9; --success: #2e7d32; --warning: #d32f2f; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Kanit', sans-serif; }
+        body { background-color: var(--bg); color: #333; padding-bottom: 80px; }
+
+        header { background: #222222; color: white; padding: 25px 20px 40px; border-radius: 0; box-shadow: none; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        .user-name { font-size: 1.4rem; font-weight: 600; }
+        .room-badge { background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 20px; font-size: 0.9rem; }
+
+        .container { max-width: 600px; margin: -30px auto 0; padding: 0 20px; }
+        .bill-card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 1px solid #f0f0f0; position: relative; overflow: hidden; }
+        .bill-month { text-align: center; margin-bottom: 20px; border-bottom: 2px dashed #eee; padding-bottom: 15px; }
+        .bill-month h2 { color: var(--primary); font-size: 1.2rem; }
+        
+        .bill-item { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 1rem; color: #555; }
+        .bill-item i { width: 25px; color: var(--secondary); }
+        .sub-text { font-size: 0.8rem; color: #999; display: block; margin-left: 28px; margin-bottom: 15px; }
+        
+        .total-row { margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .total-price { font-size: 1.8rem; font-weight: 700; color: var(--primary); }
+
+        .btn-pay { width: 100%; padding: 15px; background: #000000; color: white; border: none; border-radius: 50px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; }
+        .btn-pay:hover { background: #333333; }
+        .btn-pay:active { transform: scale(0.98); }
+
+        .btn-print { width: 100%; padding: 12px; background: white; color: var(--primary); border: 2px solid var(--primary); border-radius: 50px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+        .btn-print:hover { background: #f0f0f0; }
+
+        .status-box { margin-top: 20px; text-align: center; padding: 15px; border-radius: 10px; font-weight: bold; }
+        .status-pending { background: #ffebee; color: var(--warning); border: 1px solid #ffcdd2; }
+        .status-paid { background: #e8f5e9; color: var(--success); border: 1px solid #c8e6c9; }
+
+        .history-section { margin-top: 30px; }
+        .section-title { font-size: 1.1rem; color: var(--primary); margin-bottom: 15px; font-weight: 600; }
+        .history-item { background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #f0f0f0; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); z-index: 99; border-top: 1px solid #eee; }
+        .nav-item { text-decoration: none; color: #999; text-align: center; font-size: 0.8rem; flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .nav-item.active { color: var(--primary); font-weight: 600; }
+        .nav-item i { font-size: 1.4rem; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 340px; text-align: center; position: relative; max-height: 90vh; overflow-y: auto; }
+        .file-input-wrapper { margin-top: 15px; position: relative; overflow: hidden; display: inline-block; }
+        .btn-upload { border: 2px dashed #ccc; padding: 10px; width: 100%; border-radius: 8px; cursor: pointer; color: #666; background: #fafafa; }
+        
+        .bank-details { background: #f9f9f9; padding: 15px; border-radius: 10px; margin: 15px 0; text-align: left; border: 1px solid #eee; }
+        .bank-details p { margin-bottom: 5px; font-size: 0.9rem; color: #555; }
+        .bank-acc-num { font-size: 1.4rem; font-weight: 700; color: var(--primary); letter-spacing: 1px; margin: 5px 0; }
+
+        @media print {
+            body { background: white; padding: 0; }
+            header, .bottom-nav, #actionArea, .history-section { display: none !important; }
+            .container { margin: 0 auto; max-width: 100%; padding: 20px; }
+            .bill-card { box-shadow: none; border: 1px solid #ddd; border-radius: 8px; }
+            .bill-month h2 { color: black; }
+            .bill-card::after {
+                content: "THE ONE HOUSE 3";
+                position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg);
+                font-size: 3rem; font-weight: bold; color: rgba(0,0,0,0.03); z-index: 0; pointer-events: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-top">
+            <div>
+                <div class="user-name">สวัสดี, คุณลูกค้า</div>
+                <div style="font-size: 0.9rem; opacity: 0.8;">THE ONE HOUSE 3</div>
+            </div>
+            <div class="room-badge" id="roomDisplay">Loading...</div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="noBillMessage" style="display:none; text-align:center; padding:50px; color:#888;">
+            <i class="fas fa-file-invoice" style="font-size:3rem; margin-bottom:10px;"></i><br>
+            ยังไม่มีบิลเรียกเก็บในขณะนี้
+        </div>
+
+        <div class="bill-card" id="billCard" style="display:none;">
+            <div class="bill-month">
+                <h2>ใบแจ้งหนี้ประจำเดือน</h2>
+                <span id="dueDate">กรุณาชำระภายในวันที่ 5</span>
+            </div>
+
+            <div class="bill-item">
+                <div><i class="fas fa-home"></i> ค่าเช่าห้อง</div>
+                <div id="rentCost">0 ฿</div>
+            </div>
+
+            <div class="bill-item">
+                <div><i class="fas fa-bolt"></i> ค่าไฟฟ้า (8บ./หน่วย)</div>
+                <div id="elecCost">0 ฿</div>
+            </div>
+            <span class="sub-text" id="elecDetail">มิเตอร์: -</span>
+
+            <div class="bill-item" style="margin-bottom:15px;">
+                <div><i class="fas fa-tint"></i> ค่าน้ำ (เหมาจ่าย)</div>
+                <div id="waterCost">0 ฿</div>
+            </div>
+
+            <div class="bill-item">
+                <div><i class="fas fa-wifi"></i> ค่าอินเทอร์เน็ต</div>
+                <div id="internetCost">0 ฿</div>
+            </div>
+
+            <div class="total-row">
+                <span>ยอดชำระรวม</span>
+                <span class="total-price" id="totalPrice">0 ฿</span>
+            </div>
+
+            <div id="actionArea"></div>
+        </div>
+
+        <div class="history-section">
+            <div class="section-title">ประวัติการชำระเงิน</div>
+            <div class="history-item">
+                <div>
+                    <div style="font-weight: 600;">เดือนที่แล้ว</div>
+                    <div style="font-size: 0.8rem; color:#888;">จ่ายเมื่อ 04 ม.ค.</div>
+                </div>
+                <div style="color:#2e7d32;">ชำระแล้ว</div>
+            </div>
+        </div>
+    </main>
+
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item active"><i class="fas fa-wallet"></i> บิล/ชำระเงิน</a>
+        <a href="tenant_reports.html" class="nav-item"><i class="fas fa-tools"></i> แจ้งซ่อม</a>
+        <a onclick="logout()" class="nav-item" style="cursor:pointer;"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</a>
+    </nav>
+
+    <div class="modal" id="paymentModal">
+        <div class="modal-content">
+            <h3 style="color:var(--primary);">ช่องทางการชำระเงิน</h3>
+            <div class="bank-details">
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                    <i class="fas fa-university fa-2x" style="color:#00a950;"></i> <div>
+                        <div style="font-weight:bold;">ธนาคารกสิกรไทย (K-Bank)</div>
+                        <div style="font-size:0.8rem;">ออมทรัพย์</div>
+                    </div>
+                </div>
+                <p>เลขที่บัญชี:</p>
+                <div class="bank-acc-num">000-0-00000-0</div> 
+                <p>ชื่อบัญชี: <b>หอพัก The One House 3</b></p>
+            </div>
+
+            <p style="font-size:0.9rem; color:#777;">หรือสแกน QR Code</p>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" style="width:120px; margin:5px 0 15px;">
+            <hr style="border:none; border-top:1px dashed #ccc; margin:10px 0;">
+            <p style="margin-bottom:10px;">ยอดโอน: <b id="modalTotal" style="color:var(--primary); font-size:1.2rem;">0</b> บาท</p>
+            
+            <input type="file" id="slipInput" accept="image/*" style="display:none;" onchange="handleFileSelect()">
+            <button class="btn-upload" onclick="document.getElementById('slipInput').click()"><i class="fas fa-image"></i> กดเพื่อแนบรูปสลิป</button>
+            <div id="fileName" style="font-size:0.8rem; color:green; margin-top:5px; height:20px;"></div>
+
+            <button onclick="confirmUpload()" style="width:100%; padding:12px; background:var(--primary); color:white; border:none; border-radius:50px; margin-top:15px; font-weight:bold; cursor:pointer;">ยืนยันการโอนเงิน</button>
+            <button onclick="document.getElementById('paymentModal').style.display='none'" style="background:none; border:none; margin-top:10px; color:#777; cursor:pointer;">ปิดหน้าต่าง</button>
+        </div>
+    </div>
+
+    <script>
+        const MY_ROOM = localStorage.getItem('current_logged_in_room');
+        if (!MY_ROOM) { alert("กรุณาเข้าสู่ระบบก่อนครับ"); window.location.href = 'login_tenant.html'; }
+
+        // อัตราค่าไฟให้ตรงกับหน้าแอดมินใหม่ (8 บาท/หน่วย)
+        const ELEC_RATE = 8; 
+
+        let allBills = JSON.parse(localStorage.getItem('apartment_bills')) || {};
+        let myBill = allBills[MY_ROOM];
+
+        document.getElementById('roomDisplay').innerText = `Room ${MY_ROOM}`;
+
+        // เช็คว่าแอดมินทำบิลหรือยัง (ดูจากค่าไฟใหม่ที่กรอกเข้ามา)
+        if (!myBill || !myBill.elec_new || myBill.elec_new === "") {
+            document.getElementById('noBillMessage').style.display = 'block';
+        } else {
+            renderBill();
+        }
+
+        function renderBill() {
+            document.getElementById('billCard').style.display = 'block';
+            
+            let eOld = parseFloat(myBill.elec_old) || 0;
+            let eNew = parseFloat(myBill.elec_new) || 0;
+            let elecUnits = (eNew > eOld) ? (eNew - eOld) : 0;
+            let elecPrice = elecUnits * ELEC_RATE;
+
+            // ดึงค่าคงที่จากแอดมิน
+            let waterPrice = parseFloat(myBill.water) || 0;
+            let internetPrice = parseFloat(myBill.internet) || 0;
+            let rentPrice = parseFloat(myBill.room_price) || 0;
+
+            let total = rentPrice + elecPrice + waterPrice + internetPrice;
+
+            document.getElementById('rentCost').innerText = rentPrice.toLocaleString() + ' ฿';
+            document.getElementById('elecCost').innerText = elecPrice.toLocaleString() + ' ฿';
+            document.getElementById('elecDetail').innerText = `มิเตอร์: ${myBill.elec_old} -> ${myBill.elec_new} (${elecUnits} หน่วย)`;
+            document.getElementById('waterCost').innerText = waterPrice.toLocaleString() + ' ฿';
+            document.getElementById('internetCost').innerText = internetPrice.toLocaleString() + ' ฿';
+            
+            document.getElementById('totalPrice').innerText = total.toLocaleString() + ' ฿';
+            document.getElementById('modalTotal').innerText = total.toLocaleString();
+
+            const actionArea = document.getElementById('actionArea');
+            if (myBill.status === 'pending') {
+                actionArea.innerHTML = `
+                    <div class="status-box status-pending"><i class="fas fa-clock"></i> รอเจ้าของหอตรวจสอบสลิป</div>
+                    <button class="btn-print" onclick="window.print()"><i class="fas fa-print"></i> บันทึกใบแจ้งหนี้เป็น PDF</button>
+                `;
+            } else if (myBill.status === 'paid') {
+                actionArea.innerHTML = `
+                    <div class="status-box status-paid"><i class="fas fa-check-circle"></i> ชำระเรียบร้อยแล้ว</div>
+                    <button class="btn-print" onclick="window.print()"><i class="fas fa-print"></i> บันทึกใบเสร็จรับเงินเป็น PDF</button>
+                `;
+            } else {
+                actionArea.innerHTML = `
+                    <button class="btn-pay" onclick="openPayment()"><i class="fas fa-money-bill-wave"></i> ชำระเงิน / แนบสลิป</button>
+                    <button class="btn-print" onclick="window.print()"><i class="fas fa-print"></i> บันทึกใบแจ้งหนี้เป็น PDF</button>
+                `;
+            }
+        }
+
+        function openPayment() { document.getElementById('paymentModal').style.display = 'flex'; }
+        
+        let selectedSlipBase64 = null;
+        function handleFileSelect() {
+            const fileInput = document.getElementById('slipInput');
+            const file = fileInput.files[0];
+            if (file) {
+                document.getElementById('fileName').innerText = "✓ เลือกไฟล์: " + file.name;
+                const reader = new FileReader(); reader.readAsDataURL(file);
+                reader.onload = function(e) { selectedSlipBase64 = e.target.result; };
+            }
+        }
+
+        function confirmUpload() {
+            if (!selectedSlipBase64) { alert('กรุณาแนบรูปสลิปโอนเงิน เพื่อยืนยันครับ'); return; }
+            allBills[MY_ROOM].slip = selectedSlipBase64;
+            allBills[MY_ROOM].status = 'pending'; 
+            localStorage.setItem('apartment_bills', JSON.stringify(allBills));
+            alert('ส่งสลิปยืนยันเรียบร้อย! รอแอดมินตรวจสอบครับ');
+            document.getElementById('paymentModal').style.display = 'none';
+            location.reload();
+        }
+
+        function logout() { localStorage.removeItem('current_logged_in_room'); window.location.href = 'index.html'; }
+    </script>
+</body>
+</html>

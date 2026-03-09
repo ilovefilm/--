@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ยืนยันการจอง - The One House 3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --primary: #4a3733; 
+            --secondary: #8d6e63;
+            --bg: #f5f1e8;
+            --white: #ffffff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Kanit', sans-serif; }
+        body { background-color: var(--bg); color: #333; }
+
+        /* Navbar */
+        .navbar {
+            background: var(--primary); padding: 15px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .nav-brand { color: #fff; font-size: 1.5rem; font-weight: 800; text-decoration: none; }
+
+        /* Container */
+        .container {
+            max-width: 1000px; margin: 40px auto; padding: 0 20px;
+        }
+
+        .booking-title {
+            text-align: center; margin-bottom: 30px; color: var(--primary);
+        }
+
+        .booking-grid {
+            display: grid; grid-template-columns: 1fr; gap: 30px;
+        }
+        @media(min-width: 768px) {
+            .booking-grid { grid-template-columns: 1fr 1.5fr; }
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--white); border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05); padding: 30px;
+        }
+
+        /* --- Payment Info Section (Left) --- */
+        .payment-header { font-size: 1.2rem; font-weight: 600; color: var(--primary); margin-bottom: 20px; border-bottom: 2px solid var(--secondary); padding-bottom: 10px; }
+        
+        .bank-box {
+            background: #f4f6f8; border-radius: 10px; padding: 15px; margin-bottom: 20px;
+            border-left: 5px solid #00c300; /* สีเขียวธนาคารกสิกร */
+        }
+        .bank-name { font-weight: bold; color: #333; }
+        .bank-number { font-size: 1.4rem; color: var(--primary); letter-spacing: 1px; margin: 5px 0; font-weight: 700; }
+        .bank-owner { font-size: 0.9rem; color: #666; }
+
+        .qr-box {
+            text-align: center; margin: 20px 0;
+        }
+        .qr-img {
+            width: 180px; height: 180px; object-fit: cover; border: 1px solid #ddd; padding: 5px;
+        }
+
+        .contact-list { list-style: none; margin-top: 20px; }
+        .contact-list li { margin-bottom: 10px; display: flex; align-items: center; gap: 10px; font-size: 1rem; }
+        .icon-box { 
+            width: 35px; height: 35px; background: var(--secondary); color: white;
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+        }
+
+        /* --- Form Section (Right) --- */
+        .room-summary {
+            background: #fff8e1; border: 1px dashed var(--secondary);
+            padding: 15px; border-radius: 10px; margin-bottom: 25px; text-align: center;
+        }
+        .room-summary h3 { color: var(--primary); }
+
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; margin-bottom: 8px; font-weight: 500; color: #555; }
+        .form-input {
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;
+            font-size: 1rem; transition: 0.3s;
+        }
+        .form-input:focus { border-color: var(--secondary); outline: none; }
+
+        /* Style สำหรับปุ่มอัพโหลด */
+        .upload-container {
+            border: 2px dashed #ccc; border-radius: 8px; padding: 20px;
+            text-align: center; cursor: pointer; transition: 0.3s; position: relative;
+            background: #fafafa;
+        }
+        .upload-container:hover { border-color: var(--secondary); background: #f0ebe5; }
+        .upload-container input[type="file"] {
+            position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer;
+        }
+        .upload-icon { font-size: 2rem; color: #aaa; margin-bottom: 10px; }
+        .upload-text { color: #666; font-size: 0.9rem; }
+        
+        .preview-box {
+            margin-top: 15px; display: none; text-align: center;
+        }
+        .preview-img {
+            max-width: 100%; max-height: 300px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .remove-slip {
+            color: #ef5350; cursor: pointer; font-size: 0.9rem; margin-top: 5px; display: inline-block;
+        }
+
+        .btn-submit {
+            width: 100%; background: var(--primary); color: white; border: none;
+            padding: 15px; font-size: 1.1rem; border-radius: 8px; cursor: pointer;
+            font-weight: 600; transition: 0.3s;
+        }
+        .btn-submit:hover { background: var(--secondary); transform: translateY(-2px); }
+        .btn-submit:disabled { background: #ccc; cursor: not-allowed; }
+
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-brand">THE ONE HOUSE 3</a>
+    </nav>
+
+    <div class="container">
+        <h1 class="booking-title">ยืนยันการจองห้องพัก</h1>
+
+        <div class="booking-grid">
+            
+            <div class="card">
+                <div class="payment-header"><i class="fas fa-wallet"></i> ช่องทางการชำระเงิน</div>
+                
+                <div class="bank-box">
+                    <div class="bank-name"><i class="fas fa-university"></i> ธนาคารกสิกรไทย</div>
+                    <div class="bank-number">123-4-56789-0</div>
+                    <div class="bank-owner">ชื่อบัญชี: หอพัก The One House 3</div>
+                </div>
+
+                <div class="qr-box">
+                    <p style="margin-bottom:10px; font-size:0.9rem;">สแกนเพื่อชำระเงินมัดจำ</p>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" class="qr-img" alt="QR Code Payment">
+                </div>
+
+                <div class="payment-header" style="margin-top:30px;"><i class="fas fa-headset"></i> ติดต่อเรา</div>
+                <ul class="contact-list">
+                    <li><div class="icon-box"><i class="fas fa-phone"></i></div> <span>081-234-5678 (ป้าน้อย)</span></li>
+                    <li><div class="icon-box"><i class="fab fa-line"></i></div> <span>Line ID: @theonehouse3</span></li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="room-summary">
+                    <h3>กำลังทำการจองห้อง: <span id="booking-room-id">...</span></h3>
+                    <p>ราคา: <span id="booking-room-price">...</span> บาท/เดือน</p>
+                </div>
+
+                <form id="bookingForm" onsubmit="submitBooking(event)">
+                    <div class="form-group">
+                        <label class="form-label">ชื่อ - นามสกุล (ผู้จอง)</label>
+                        <input type="text" id="custName" class="form-input" placeholder="กรอกชื่อและนามสกุลจริง" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">เบอร์โทรศัพท์ติดต่อ</label>
+                        <input type="tel" id="custPhone" class="form-input" placeholder="ตัวอย่าง: 0812345678" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">วันที่ต้องการเข้าอยู่</label>
+                        <input type="date" id="moveInDate" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">หลักฐานการโอนเงิน (สลิป)</label>
+                        <div class="upload-container">
+                            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                            <div class="upload-text" id="uploadLabel">แตะเพื่อเลือกรูปสลิป</div>
+                            <input type="file" id="slipInput" accept="image/*" onchange="handleFileUpload(event)">
+                        </div>
+                        <div class="preview-box" id="previewBox">
+                            <img id="previewImg" class="preview-img" src="">
+                            <div class="remove-slip" onclick="removeSlip()">ลบรูปภาพ</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">หมายเหตุเพิ่มเติม (ถ้ามี)</label>
+                        <textarea id="custNote" class="form-input" rows="3" placeholder="เช่น นำรถยนต์มาด้วย, เข้าอยู่ช่วงเย็น ฯลฯ"></textarea>
+                    </div>
+
+                    <button type="submit" id="btnSubmit" class="btn-submit">ยืนยันการจองห้องพัก</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // 1. ดึงข้อมูล Room ID
+        const params = new URLSearchParams(window.location.search);
+        const roomId = params.get('id');
+
+        // โหลดข้อมูลห้องพัก
+        const allRooms = JSON.parse(localStorage.getItem('admin_all_rooms')) || [];
+        const room = allRooms.find(r => r.id == roomId);
+
+        if (room) {
+            document.getElementById('booking-room-id').innerText = room.id;
+            document.getElementById('booking-room-price').innerText = parseInt(room.price).toLocaleString();
+        } else {
+            alert('ไม่พบข้อมูลห้องพัก');
+            window.location.href = 'index.html';
+        }
+
+        // ตัวแปรเก็บรูปภาพ (Base64)
+        let slipBase64 = null;
+
+        // ฟังก์ชันจัดการอัปโหลดรูป
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // ตรวจสอบขนาดไฟล์ (เช่น ห้ามเกิน 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('ไฟล์มีขนาดใหญ่เกินไป (ไม่ควรเกิน 5MB)');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // แสดง Preview
+                const img = document.getElementById('previewImg');
+                img.src = e.target.result;
+                document.getElementById('previewBox').style.display = 'block';
+                document.getElementById('uploadLabel').innerText = 'เปลี่ยนรูปภาพ';
+
+                // ย่อรูปก่อนเก็บลง LocalStorage (ป้องกันเมมเต็ม)
+                compressImage(e.target.result, 800, 0.7).then(compressed => {
+                    slipBase64 = compressed;
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeSlip() {
+            document.getElementById('slipInput').value = "";
+            document.getElementById('previewBox').style.display = 'none';
+            document.getElementById('uploadLabel').innerText = 'แตะเพื่อเลือกรูปสลิป';
+            slipBase64 = null;
+        }
+
+        // ฟังก์ชันย่อรูปภาพ (ใช้ Canvas)
+        function compressImage(base64Str, maxWidth = 800, quality = 0.7) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.src = base64Str;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > maxWidth) {
+                        height *= maxWidth / width;
+                        width = maxWidth;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', quality));
+                };
+            });
+        }
+
+        // 3. ส่งข้อมูลการจอง
+        function submitBooking(e) {
+            e.preventDefault();
+
+            // เช็คว่าอัพสลิปหรือยัง
+            if (!slipBase64) {
+                alert('กรุณาแนบสลิปการโอนเงินก่อนยืนยัน');
+                return;
+            }
+
+            const name = document.getElementById('custName').value;
+            const phone = document.getElementById('custPhone').value;
+            const date = document.getElementById('moveInDate').value;
+            const note = document.getElementById('custNote').value;
+            
+            const btn = document.getElementById('btnSubmit');
+            btn.innerText = 'กำลังบันทึก...';
+            btn.disabled = true;
+
+            const newBooking = {
+                id: Date.now(),
+                roomId: roomId,
+                customerName: name,
+                customerPhone: phone,
+                moveInDate: date,
+                note: note,
+                slipImage: slipBase64, // บันทึกรูปภาพลงไป
+                status: 'pending',
+                timestamp: new Date().toLocaleString('th-TH')
+            };
+
+            // บันทึกลง LocalStorage
+            try {
+                let bookingList = JSON.parse(localStorage.getItem('booking_requests')) || [];
+                bookingList.push(newBooking);
+                localStorage.setItem('booking_requests', JSON.stringify(bookingList));
+
+                alert('✅ จองสำเร็จ! ทางหอพักได้รับข้อมูลและสลิปแล้ว');
+                window.location.href = 'index.html';
+            } catch (error) {
+                alert('เกิดข้อผิดพลาด: พื้นที่จัดเก็บเต็ม กรุณาลบข้อมูลเก่าออกบ้าง');
+                console.error(error);
+                btn.innerText = 'ยืนยันการจองห้องพัก';
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
